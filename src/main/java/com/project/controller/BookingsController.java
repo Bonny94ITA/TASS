@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.*;
 import com.project.repository.*;
 
+import com.project.security.PasswordHash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,36 +36,6 @@ public class BookingsController {
         bookingRepository.findAll().forEach(bookings::add);
 
         return bookings;
-    }
-
-    @PostMapping(value = "/guests/login")
-    public Guest postCustomer(@RequestBody Map<String, Object> requestParams) throws NoSuchAlgorithmException {
-        ObjectMapper mapper = new ObjectMapper();
-        Long id = mapper.convertValue(requestParams.get("id"), Long.class);
-
-        if (guestRepository.findById(id).isPresent()) {
-
-        }
-
-        return guest;
-    }
-
-    @PostMapping(value = "/guests/register")
-    public Guest postCustomer(@RequestBody Guest g) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(g.getPwd().getBytes());
-        byte[] bytes = md.digest();
-        StringBuilder sb = new StringBuilder();
-
-        for(int i = 0; i < bytes.length ; i++) {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        String generatedPassword = sb.toString();
-
-        Guest guest = guestRepository.save(new Guest(g.getEmail(), g.getName(),
-                generatedPassword, g.getUsername()));
-        return guest;
     }
 
     /*
