@@ -14,36 +14,29 @@ public class Payment {
     @Column(name = "totalCost")
     private long totalCost;
 
-    //ALtri attributi
-
     @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="booking")
     private Booking booking;
 
-    //CONSTRUCTORS
     public Payment() {}
     public Payment(long totalCost, Booking booking) {
         this.booking = booking;
         this.totalCost = totalCost;
     }
 
-    //GETTERS
-    public long getTotalCost() {
-        return totalCost;
-    }
 
+    //GETTERS
     public long getId() {
         return id;
     }
-
-    //SETTERS
-    public void setTotalCost(int totalCost) {
-        this.totalCost = totalCost;
+    public long getTotalCost() {
+        return totalCost;
     }
+    public Booking getBooking() { return booking; }
 
-    //ADDERS
-    public void setBooking(Booking booking) {
-        this.booking = booking;
+
+    public void setTotalCost(long totalCost) {
+        this.totalCost = totalCost;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.project.model;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "hotel")
@@ -26,7 +27,7 @@ public class Hotel {
     private Short stars;
 
     //CONSTRUCTORS
-    public Hotel() {}
+    public Hotel() {    }
     public Hotel(String address, Short CAP, String city, String cellNumber, Short stars) {
         this.address = address;
         this.CAP = CAP;

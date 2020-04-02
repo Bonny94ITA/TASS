@@ -1,7 +1,7 @@
 package com.project.model;
 
 import javax.persistence.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +25,7 @@ public class Guest {
     @Column(name = "hashPwd")
     private String pwd;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany
     @JoinColumn(name="guest")
     private List<Booking> booking;
 
@@ -36,7 +36,7 @@ public class Guest {
         this.username = username;
         this.email = email;
         this.name = name;
-        this.booking = new LinkedList<>();
+        this.booking = null;
     }
 
     //GETTERS
@@ -52,9 +52,10 @@ public class Guest {
     public void setName(String name) { this.name = name; }
     public void setBooking(List<Booking> booking) { this.booking = booking; }
 
-    //ADDERS
-    public void addBooking(Booking book) {
-        booking.add(book);
+    public void addBooking(Booking booking){
+        if(this.booking == null)
+            this.booking = new ArrayList<>();
+        this.booking.add(booking);
     }
 
     @Override

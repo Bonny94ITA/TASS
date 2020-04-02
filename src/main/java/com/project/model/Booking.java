@@ -1,7 +1,8 @@
 package com.project.model;
 
 import javax.persistence.*;
-import java.util.LinkedList;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,35 +14,41 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name="booking")
     private List<Sojourn> sojourns;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinColumn(name="booking")
     private List<Item> rentedItems;
 
+
     //CONSTRUCTORS
-    public Booking() {
-        rentedItems = new LinkedList<>();
-        sojourns = new LinkedList<>();
+    public Booking() {}
+    public Booking(List<Sojourn> sojourns, List<Item> items) {
+        this.sojourns = sojourns;
+        this.rentedItems = items;
     }
 
     //GETTERS
     public Long getId() { return id; }
     public List<Sojourn> getSojourns() { return sojourns; }
-    public List<Item> getRentedItem() { return rentedItems; }
+    public List<Item> getRentedItems() { return rentedItems; }
 
-    //SETTERS
+    //SETTERS       //non va bene mettere lista = nuova pechè si perdono i collegamenti
     public void setId(Long id) { this.id = id; }
-    public void setSojourns(List<Sojourn> sojourns) { this.sojourns = sojourns; }
-    public void setRentedItems(List<Item> rentedItems) { this.rentedItems = rentedItems; }
+    //public void setSojourns(List<Sojourn> sojourns) { this.sojourns = sojourns; }
+    //public void setRentedItems(List<Item> rentedItems) { this.rentedItems = rentedItems; }
 
     //ADDERS
-    public void addItem(Item item) {
+    public void addRentedItems(Item item) {
+        if(rentedItems == null)
+            rentedItems = new ArrayList<>();
         rentedItems.add(item);
     }
-    public void addSojourn(Sojourn sojourn) {
+    public void addSojourns(Sojourn sojourn) {
+        if(sojourns == null)
+            sojourns = new ArrayList<>();
         sojourns.add(sojourn);
     }
 

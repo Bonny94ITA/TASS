@@ -1,7 +1,10 @@
 package com.project.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "sojourn")
@@ -13,21 +16,23 @@ public class Sojourn {
     private Long id;
 
     @Column(name = "arrival")
+    @JsonFormat(pattern="dd/MM/yyyy")
     private Date arrival;
 
     @Column(name = "departure")
+    @JsonFormat(pattern="dd/MM/yyyy")
     private Date departure;
 
-    @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "room")
     private Room room;
 
     //CONSTRUCTORS
     public Sojourn() {}
-    public Sojourn(Date arrival, Date departure) {
+    public Sojourn(Date arrival, Date departure, Room room) {
         this.arrival = arrival;
         this.departure = departure;
-        this.room = null;
+        this.room = room;
     }
 
     //GETTERS

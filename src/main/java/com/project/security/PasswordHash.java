@@ -3,6 +3,7 @@ package com.project.security;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+// sarebbe da fare nel front end
 public class PasswordHash {
     private String passwordToHash;
 

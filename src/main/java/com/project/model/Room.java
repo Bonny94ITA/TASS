@@ -17,12 +17,13 @@ public class Room {
     @Column(name = "ppn")
     private int pricePerNight;
 
-    @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="hotel")
     private Hotel hotel;
 
     //CONSTRUCTORS
     public Room() {}
+
     public Room(int numPlaces, Hotel hotel, int pricePerNight) {
         this.numPlaces = numPlaces;
         this.hotel = hotel;
@@ -40,6 +41,7 @@ public class Room {
     public void setNumPlaces(int numPlaces) { this.numPlaces =numPlaces; }
     public void setHotel(Hotel hotel) { this.hotel= hotel; }
     public void setPricePerNight(int pricePerNight) {this.pricePerNight = pricePerNight; }
+
 
     @Override
     public String toString() {

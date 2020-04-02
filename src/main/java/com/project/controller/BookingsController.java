@@ -1,14 +1,18 @@
 package com.project.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.*;
-import com.project.repository.*;
 
-import com.project.security.PasswordHash;
+
+import com.project.repository.SojournRepository;
+import com.project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.MessageDigest;
+import java.awt.print.Book;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,90 +20,48 @@ import java.util.*;
 
 @RestController
 public class BookingsController {
+//PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
+    @Autowired
+    IBookingService bookingService;
 
-    @Autowired
-    BookingRepository bookingRepository;
-    @Autowired
-    GuestRepository guestRepository;
-    @Autowired
-    ItemRepository itemRepository;
-    @Autowired
-    SojournRepository sojournRepository;
-    @Autowired
-    RoomRepository roomRepository;
-    @Autowired
-    PaymentRepository paymentRepository;
 
-    @RequestMapping(value = "/bookings", method = RequestMethod.POST)
+    @GetMapping("/booking")
     public List<Booking> getAllBooking() {
-        List<Booking> bookings = new ArrayList<>();
-        bookingRepository.findAll().forEach(bookings::add);
-
-        return bookings;
+        return bookingService.findAll();
     }
 
-    /*
-    {
-	"guest": 1,
-	"items": [
-		{
-			 "item": 1
-		},
-		{
-			 "item": 1
-		}
-	],
-	"sojourns": [
-		{
-			"arrival": "21/05/1921",
-			"departure": "21/05/1921",
-			"room": 1
-		},
-		{
-			"arrival": "21/05/1921",
-			"departure": "21/05/1921",
-			"room": 1
-		}
-	]
-}
-     */
-
-    @RequestMapping(value = "/bookings/book", method = RequestMethod.POST)
-    public String postInsertBooking(@RequestBody Map<String,Object> requestParams) throws ParseException {
+    //da fare: quando i parametri passati non sono in database ritorna null, quando non passiamo i parametri la get su json torna null
+    @PostMapping(value = "/bookings/insert")
+    public Booking postRegisterGuest(@RequestBody Map<String,Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
-        Long id = mapper.convertValue(requestParams.get("guest"),Long.class);
-        Object sojourns = requestParams.get("sojourns");
-        Object items = requestParams.get("items");
-        Booking booking = bookingRepository.save(new Booking());
-        Guest guest = guestRepository.findById(id).get();
-
-        for (LinkedHashMap<String, Object> i : (ArrayList<LinkedHashMap<String, Object>>)items) {
-            Long itemId = mapper.convertValue(i.get("item"), Long.class);
-            Item item = itemRepository.findById(itemId).get();
-            booking.addItem(item);
-        }
-
-        //Total cost da calcolare
-        Payment payment = new Payment(450, booking);
-        guest.addBooking(booking);
-        guest.addBooking(booking);
-
-        for (LinkedHashMap<String, Object> s : (ArrayList<LinkedHashMap<String, Object>>)sojourns) {
-            Long roomId = mapper.convertValue(s.get("room"), Long.class);
-            String arrival = mapper.convertValue(s.get("arrival"), String.class);
-            String departure = mapper.convertValue(s.get("departure"), String.class);
-            Room room = roomRepository.findById(roomId).get();
-            Sojourn sojourn = new Sojourn(new SimpleDateFormat("dd/MM/yyyy").parse(departure),
-                    new SimpleDateFormat("dd/MM/yyyy").parse(arrival));
-            sojournRepository.save(sojourn);
-            sojourn.setRoom(room);
-            booking.addSojourn(sojourn);
-        }
-
-        guestRepository.save(guest);
-        paymentRepository.save(payment);
-        bookingRepository.save(booking);
-
-        return "OK";
+        //get from params
+        Long guestId = mapper.convertValue(requestParams.get("guest"),Long.class);
+        Booking booking = mapper.convertValue(requestParams.get("booking"),Booking.class);
+        Booking b =  bookingService.addBook(booking,guestId);
+        return b;
     }
 }
+/* json
+    localhost:8080/bookings/insert
+    {
+        "guest": 1,
+        "booking":{
+            "sojourns": [
+                    {
+                            "arrival": "21/05/1921",
+                            "departure": "4/06/1121",
+                            "room": {"id":1}
+                    },
+                    {
+                            "arrival": "8/07/1921",
+                            "departure": "11/08/1921",
+                            "room": {"id":1}
+                    }
+            ],
+            "rentedItems": [
+                    {"id": 1},
+                    {"id": 2}
+            ]
+        }
+    }
+ */
