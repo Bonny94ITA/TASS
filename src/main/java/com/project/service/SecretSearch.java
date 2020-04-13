@@ -22,7 +22,8 @@ public class SecretSearch implements ISecretSearch{
     public static ISecretSearch getInstance() {
         return INSTANCE;
     }
-    
+
+    //LOL
     private SecretSearch () {
         clips = new Environment();
 
