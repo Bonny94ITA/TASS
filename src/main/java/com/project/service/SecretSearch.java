@@ -22,7 +22,7 @@ public class SecretSearch implements ISecretSearch{
     public static ISecretSearch getInstance() {
         return INSTANCE;
     }
-    
+
     private SecretSearch () {
         clips = new Environment();
 
