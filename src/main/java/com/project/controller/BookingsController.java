@@ -1,29 +1,26 @@
 package com.project.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.*;
-
-
-import com.project.repository.SojournRepository;
 import com.project.service.*;
+import ilog.concert.IloException;
+import net.sf.clipsrules.jni.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Book;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
 public class BookingsController {
 //PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
     @Autowired
-    IBookingService bookingService;
+    private IBookingService bookingService;
+    private ISecretSearch secretSearch = ISecretSearch.getInstance();
 
+    @GetMapping("/prova")
+    public List<Alternative> prova() throws CLIPSException, IloException {
+        return secretSearch.getAllAlternatives();
+    }
 
     @GetMapping("/booking")
     public List<Booking> getAllBooking() {
