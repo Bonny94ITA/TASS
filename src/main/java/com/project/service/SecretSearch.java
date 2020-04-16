@@ -1,10 +1,13 @@
 package com.project.service;
 
 import com.project.model.Alternative;
+import com.project.model.Hotel;
+import com.project.model.Room;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import javafx.util.Pair;
 import net.sf.clipsrules.jni.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,11 +18,11 @@ public class SecretSearch implements ISecretSearch{
     private Environment clips;
     private IloCplex cplex;
 
-    public static ISecretSearch getInstance() {
-        return INSTANCE;
-    }
-    
-    private SecretSearch () {
+    @Autowired
+    IHotelService hotelService;
+
+    @Autowired
+    public SecretSearch () {
         clips = new Environment();
 
         try
@@ -35,20 +38,49 @@ public class SecretSearch implements ISecretSearch{
 
     @Override
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
-        double[][] pricePerNight = {
+
+        List<Hotel> hotelList = hotelService.findAll();
+        List<List<Room>> roomList = new ArrayList<>();
+        int max_room = 0;
+        for(int i=0;i<hotelList.size();i++){
+            Long hotel_id = hotelList.get(i).getId();
+            List<Room> rooms = hotelService.findRooms(hotel_id);
+            roomList.add(rooms);
+            if(max_room<rooms.size())
+                max_room=rooms.size();
+        }
+
+        double[][] pricePerNight = new double[max_room][hotelList.size()];
+        double[][] places = new double[max_room][hotelList.size()];
+
+        for(int i=0;i<hotelList.size();i++){
+            Hotel h = hotelList.get(i);
+            List<Room> rooms = roomList.get(i);
+            for(int j=0;j<max_room;j++) {
+                if(j>=rooms.size()){
+                    pricePerNight[j][i] = Double.MAX_VALUE;
+                    places[j][i] = 0;
+                }else{
+                    Room r = rooms.get(j);
+                    pricePerNight[j][i] = r.getPricePerNight();
+                    places[j][i] = r.getNumPlaces();
+                }
+            }
+        }
+        /*double[][] pricePerNight = {        //hotel colonna riga stanze
                 {1,2,3,4,5},
                 {6,7,8,9,10},
                 {11,12,13,14,15},
                 {16,17,18,19,20},
                 {21,22,23,24,25},
         };
-        double[][] places = {
+        double[][] places = {   //riga stanze colonna hotel
                 {1,2,2,1,1},
                 {2,2,1,2,2},
                 {2,1,2,1,2},
                 {2,1,2,2,2},
                 {1,2,2,2,2},
-        };
+        };*/
 
         List<Alternative> alternatives = new LinkedList<>();
         List<String> hotelsName = new LinkedList<>();

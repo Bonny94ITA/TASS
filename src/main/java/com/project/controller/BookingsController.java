@@ -15,7 +15,8 @@ public class BookingsController {
 //PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
     @Autowired
     private IBookingService bookingService;
-    private ISecretSearch secretSearch = ISecretSearch.getInstance();
+    @Autowired
+    private ISecretSearch secretSearch;
 
 
     @GetMapping("/prova")

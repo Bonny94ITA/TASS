@@ -7,9 +7,5 @@ import net.sf.clipsrules.jni.CLIPSException;
 import java.util.List;
 
 public interface ISecretSearch {
-
-    static ISecretSearch getInstance(){
-        return SecretSearch.getInstance();
-    }
     List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException;
 }
