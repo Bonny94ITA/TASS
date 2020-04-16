@@ -22,36 +22,32 @@ public class BookingsController {
 	"cities":
 		[
 			{
-				"city": "Milano",
-				"region": "Lombardia"
+				"city": "Nuoro",
+				"region": "Sardegna"
 			},
 			{
-				"city": "Torino",
-				"region": "Piemonte"
+				"city": "MedioCampidano",
+				"region": "Sardegna"
 			},
 			{
-				"city": "Napoli",
+				"city": "Salerno",
 				"region": "Campania"
 			}
 		],
 	"days": 5,
-	"max-budget": 700,
+	"max-budget": 700.0,
 	"people": 3,
-	"only-region":
+	"only-regions":
 		[
-			"Lombardia", "Piemonte", "Molise"
+			"Sardegna", "Campania", "Sicilia"
 		],
-	"only-not-region":
+	"only-not-regions":
 		[
-			"Sicilia", "Sardegna"
-		],
-	"not-region":
-		[
-			"Sicilia", "Sardegna"
+			"Piemonte", "Lombardia"
 		],
 	"max-stars": 4,
 	"min-stars": 1,
-	"tourism-type":
+	"tourism-types":
 		[
 			"balneare", "enogastronomico"
 		]
