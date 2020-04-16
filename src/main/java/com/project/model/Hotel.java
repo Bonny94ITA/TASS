@@ -41,13 +41,18 @@ public class Hotel {
     @Column(name = "region")
     private String region;
 
-    @ElementCollection
+    @ManyToMany
+    @JoinTable(
+            name = "hotel_type",
+            joinColumns = @JoinColumn(name = "hotel_id"),
+            inverseJoinColumns = @JoinColumn(name = "tourismTypes_id"))
     private List<TourismTypes> tourismTypes;
 
     //CONSTRUCTORS
     public Hotel() {    }
 
     public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars, String region, List<TourismTypes> tList) {
+        this.name = name;
         this.address = address;
         this.CAP = CAP;
         this.city = city;

@@ -18,7 +18,11 @@ public class Booking {
     @JoinColumn(name="booking")
     private List<Sojourn> sojourns;
 
-    @ElementCollection
+    @ManyToMany
+    @JoinTable(
+            name = "booking_item",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> rentedItems;
 
 
