@@ -42,7 +42,7 @@ public class BookingsController {
 
     //da fare: quando i parametri passati non sono in database ritorna null, quando non passiamo i parametri la get su json torna null
     @PostMapping(value = "/bookings/insert")
-    public Booking postRegisterGuest(@RequestBody Map<String,Object> requestParams) throws ParseException {
+    public Booking postRegisterBooking(@RequestBody Map<String,Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
         //get from params
         Long guestId = mapper.convertValue(requestParams.get("guest"),Long.class);

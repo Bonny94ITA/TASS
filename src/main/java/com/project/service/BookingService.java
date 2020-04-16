@@ -34,7 +34,7 @@ public class BookingService implements IBookingService {
         return bookingRepository.save(new Booking());
     }
 
-    @Override
+    @Override // forse da cancellare
     public Booking addBook(Booking booking) {
         return bookingRepository.save(new Booking(booking.getSojourns(),booking.getRentedItems()));
     }
