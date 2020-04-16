@@ -2,6 +2,7 @@ package com.project.model;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "hotel")
@@ -29,21 +30,40 @@ public class Hotel {
     @Column(name = "stars")
     private Short stars;
 
+    public List<TourismTypes> getTourismTypes() {
+        return tourismTypes;
+    }
+
+    public void setTourismTypes(List<TourismTypes> tourismTypes) {
+        this.tourismTypes = tourismTypes;
+    }
+
+    @Column(name = "region")
+    private String region;
+
+    @ElementCollection
+    private List<TourismTypes> tourismTypes;
+
     //CONSTRUCTORS
     public Hotel() {    }
-    public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars) {
+
+    public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars, String region, List<TourismTypes> tList) {
         this.address = address;
         this.CAP = CAP;
         this.city = city;
         this.cellNumber = cellNumber;
         this.stars = stars;
+        this.region = region;
+        this.tourismTypes = tList;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     public String getAddress() {
         return address;
@@ -69,7 +89,17 @@ public class Hotel {
         this.id = id;
     }
 
-    public void setName(String name) {this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
 
     public void setAddress(String address) {
         this.address = address;

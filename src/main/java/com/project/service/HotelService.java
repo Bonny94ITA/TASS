@@ -2,8 +2,10 @@ package com.project.service;
 
 import com.project.model.Hotel;
 import com.project.model.Room;
+import com.project.model.TourismTypes;
 import com.project.repository.HotelRepository;
 import com.project.repository.RoomRepository;
+import com.project.repository.TourismTypesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,8 @@ public class HotelService implements IHotelService {
     HotelRepository hotelRepository;
     @Autowired
     RoomRepository roomRepository;
+    @Autowired
+    TourismTypesRepository tourismTypesRepository;
 
     @Override
     public List<Hotel> findAll() {
@@ -36,7 +40,17 @@ public class HotelService implements IHotelService {
 
     @Override
     public Hotel addHotel(Hotel hotel){
-        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),hotel.getCAP(),hotel.getCity(),hotel.getCellNumber(),hotel.getStars()));
+
+        List<TourismTypes> tourismTypesList = new ArrayList<>();
+        for(TourismTypes t: hotel.getTourismTypes()){
+            Optional<TourismTypes> byId = tourismTypesRepository.findById(t.getId());
+            if(byId.isPresent())
+                tourismTypesList.add(byId.get());
+            //gestire quando passa un tourismtype non esistente in database
+        }
+
+        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),hotel.getCAP(),hotel.getCity(),
+                                        hotel.getCellNumber(),hotel.getStars(),hotel.getRegion(),tourismTypesList));
     }
 
     @Override
