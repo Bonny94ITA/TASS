@@ -11,5 +11,5 @@ public interface ISecretSearch {
     static ISecretSearch getInstance(){
         return SecretSearch.getInstance();
     }
-    List<Alternative> getAllAlternatives(/*PARAMETERS*/) throws CLIPSException, IloException;
+    List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException;
 }

@@ -17,9 +17,62 @@ public class BookingsController {
     private IBookingService bookingService;
     private ISecretSearch secretSearch = ISecretSearch.getInstance();
 
+/*
+{
+	"cities":
+		[
+			{
+				"city": "Milano",
+				"region": "Lombardia"
+			},
+			{
+				"city": "Torino",
+				"region": "Piemonte"
+			},
+			{
+				"city": "Napoli",
+				"region": "Campania"
+			}
+		],
+	"days": 5,
+	"max-budget": 700,
+	"people": 3,
+	"only-region":
+		[
+			"Lombardia", "Piemonte", "Molise"
+		],
+	"only-not-region":
+		[
+			"Sicilia", "Sardegna"
+		],
+	"not-region":
+		[
+			"Sicilia", "Sardegna"
+		],
+	"max-stars": 4,
+	"min-stars": 1,
+	"tourism-type":
+		[
+			"balneare", "enogastronomico"
+		]
+}
+ */
+
     @GetMapping("/prova")
-    public List<Alternative> prova() throws CLIPSException, IloException {
-        return secretSearch.getAllAlternatives();
+    public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
+            throws CLIPSException, IloException {
+        List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
+        Integer days = (Integer)requestParams.get("days");
+        Double maxBudget = (Double)requestParams.get("max-budget");
+        Integer numPeople = (Integer)requestParams.get("people");
+        List<String> onlyRegion = (List<String>)requestParams.get("only-regions");
+        List<String> onlyNotRegion = (List<String>)requestParams.get("only-not-regions");
+        Integer maxStars =(Integer)requestParams.get("max-stars");
+        Integer minStars =(Integer)requestParams.get("min-stars");
+        List<String> tourismTypes = (List<String>)requestParams.get("tourism-types");
+
+        return secretSearch.getAllAlternatives(cities, days, maxBudget, numPeople, onlyRegion,
+                                               onlyNotRegion, maxStars, minStars, tourismTypes);
     }
 
     @GetMapping("/booking")

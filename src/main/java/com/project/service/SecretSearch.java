@@ -7,17 +7,13 @@ import javafx.util.Pair;
 import net.sf.clipsrules.jni.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SecretSearch implements ISecretSearch{
+    private static final ISecretSearch INSTANCE = new SecretSearch();
     private Environment clips;
     private IloCplex cplex;
-
-    private static final ISecretSearch INSTANCE = new SecretSearch();
 
     public static ISecretSearch getInstance() {
         return INSTANCE;
@@ -38,10 +34,7 @@ public class SecretSearch implements ISecretSearch{
     }
 
     @Override
-    public List<Alternative> getAllAlternatives(/*PARAMETERS*/) throws CLIPSException, IloException {
-        double[] certaintives = {1,2,3,4,5};
-        List<Alternative> alternatives = new LinkedList<>();
-        double v[] = {0.45921, 0.81265, 0.60157, 0.15865, 0.95023};
+    public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
         double[][] pricePerNight = {
                 {1,2,3,4,5},
                 {6,7,8,9,10},
@@ -49,39 +42,94 @@ public class SecretSearch implements ISecretSearch{
                 {16,17,18,19,20},
                 {21,22,23,24,25},
         };
+        double[][] places = {
+                {1,2,2,1,1},
+                {2,2,1,2,2},
+                {2,1,2,1,2},
+                {2,1,2,2,2},
+                {1,2,2,2,2},
+        };
 
+        List<Alternative> alternatives = new LinkedList<>();
         List<String> hotelsName = new LinkedList<>();
+        List<Double> certainties = new LinkedList<>();
         List<Double> solutionToDiscard = new LinkedList<>();
-        int days = 7;
-        double certainty, budget = 500.0;
+        int days = (Integer)args[1];
+        double budget = (Double)args[2];
+        int people = (Integer)args[3];
+        int maxStars = (Integer)args[6];
+        int minStars = (Integer)args[7];
+        Random rand = new Random();
 
         clips.reset();
-        clips.assertString("(attribute (name tourism-type) " +
-                "                       (value balneare) " +
-                "                       (certainty 100.0))");
+
+        for (Object obj : (ArrayList<Object>)args[0]) {
+            LinkedHashMap<String, Object> hm = (LinkedHashMap<String, Object>)obj;
+
+            clips.assertString("(attribute (name city) " +
+                                         "(value " + hm.get("region") + "-" +  hm.get("city") + ") " +
+                                         "(certainty 100.0))");
+
+            clips.assertString("(attribute (name region) " +
+                                         "(value " + hm.get("region") + ") " +
+                                         "(certainty 100.0))");
+        }
+
+        for (String region : (ArrayList<String>)args[4]) {
+            clips.assertString("(attribute (name only-region) " +
+                                         "(value " + region + ") " +
+                                         "(certainty 100.0))");
+
+            clips.assertString("(attribute (name region) " +
+                                         "(value " + region + ") " +
+                                         "(certainty 100.0))");
+        }
+
+        for (String region : (ArrayList<String>)args[5]) {
+            clips.assertString("(attribute (name only-not-region) " +
+                                         "(value " + region + ") " +
+                                         "(certainty 100.0))");
+
+            clips.assertString("(attribute (name not-region) " +
+                                         "(value " + region + ") " +
+                                         "(certainty 100.0))");
+        }
+
+        clips.assertString("(attribute (name max-stars) " +
+                                     "(value " + maxStars + ") " +
+                                     "(certainty 100.0))");
+
+        clips.assertString("(attribute (name min-stars) " +
+                                     "(value " + minStars + ") " +
+                                     "(certainty 100.0))");
+
+        for (String tt : (ArrayList<String>)args[8]) {
+            clips.assertString("(attribute (name tourism-type) " +
+                                         "(value " + tt + ") " +
+                                         "(certainty 100.0))");
+        }
 
         clips.run();
 
         String evalStr = "(MAIN::get-hotel-attribute-list)";
         MultifieldValue mv = (MultifieldValue) clips.eval(evalStr);
+        double[] coefficients = new double[mv.size()];
+        int k = 0;
 
         for (PrimitiveValue pv : mv)
         {
             FactAddressValue fv = (FactAddressValue) pv;
-
             hotelsName.add(((LexemeValue) fv.getSlotValue("name")).getValue());
-            certainty = ((NumberValue) fv.getSlotValue("certainty")).doubleValue();
+            certainties.add(((NumberValue) fv.getSlotValue("certainty")).doubleValue());
+            coefficients[k++] = rand.nextDouble();
         }
 
-        /* TEST */
-        hotelsName = new LinkedList<>();
-        for (int i = 0; i < 5; ++i) {
-            hotelsName.add("HOTEL " + i);
-        }
+        System.out.println(hotelsName);
+        System.out.println(certainties);
 
         for (int i = 0; i < 3; ++i) {
-            Pair<Alternative, Double> p = getSolution(hotelsName, certaintives, pricePerNight,
-                    days, budget, v, solutionToDiscard, 5);
+            Pair<Alternative, Double> p = getSolution(hotelsName.subList(0,5), certainties.subList(0,5), places, pricePerNight,
+                    days, budget, Arrays.copyOfRange(coefficients, 0, 5), solutionToDiscard, 5, people);
             solutionToDiscard.add(p.getValue());
             alternatives.add(p.getKey());
         }
@@ -89,34 +137,43 @@ public class SecretSearch implements ISecretSearch{
         return alternatives;
     }
 
-    private Pair<Alternative, Double> getSolution(List<String> hotels, double certainties[], double pricePerNight[][],
-                                                  int days, double budget, double coefficients[],
-                                                  List<Double> solToDiscard, int maxNumberOfRooms)
+    private Pair<Alternative, Double> getSolution(List<String> hotels, List<Double> certainties, double places[][],
+                                                  double pricePerNight[][], int days, double budget,
+                                                  double coefficients[], List<Double> solToDiscard,
+                                                  int maxNumberOfRooms, int numPeople)
             throws IloException {
         cplex = new IloCplex();
         IloIntVar z = cplex.intVar(0, Integer.MAX_VALUE, "z");
         IloIntVar[] x = new IloIntVar[5];
         IloIntVar[][] y = new IloIntVar[5][5];
+        IloIntVar[][] g = new IloIntVar[5][5];
         IloLinearNumExpr linearNumExpr2 = cplex.linearNumExpr();
+        IloLinearNumExpr linearNumExpr4 = cplex.linearNumExpr();
         IloLinearIntExpr linearIntExpr = cplex.linearIntExpr();
         IloLinearNumExpr objective = cplex.linearNumExpr();
         List<IloRange> constraints = new ArrayList<>();
         IloIntExpr[] intExprs = new IloIntExpr[5];
         List<HashMap<String, Object>> hotelsRooms = new LinkedList<>();
         double newScalarProduct = 0.0;
+        double yMax = days;
+        double yMin = 0.1;
 
         for (int i = 0; i < 5; ++i) {
             IloLinearNumExpr linearNumExpr1 = cplex.linearNumExpr();
+            IloLinearNumExpr linearNumExpr3 = cplex.linearNumExpr();
             x[i] = cplex.intVar(0, Integer.MAX_VALUE, ("x" + i));
             linearIntExpr.addTerm(1, x[i]);
 
             for (int j = 0; j < 5; ++j) {
-                y[i][j] = cplex.intVar(0, days, ("y" + i + j));
+                y[j][i] = cplex.intVar(0, days, ("y" + j + i));
+                g[j][i] = cplex.intVar(0, 1, ("g" + j + i));
+                linearNumExpr1.addTerm(pricePerNight[j][i], y[j][i]);
+                linearNumExpr3.addTerm(places[j][i], g[j][i]);
             }
 
-            objective.addTerm(certainties[i], x[i]);
-            linearNumExpr1.addTerms(pricePerNight[i], y[i]);
+            objective.addTerm(certainties.get(i), x[i]);
             linearNumExpr2.add(linearNumExpr1);
+            linearNumExpr4.add(linearNumExpr3);
         }
 
         for (int i = 0; i < 5; ++i) {
@@ -124,6 +181,8 @@ public class SecretSearch implements ISecretSearch{
 
             for (int j = 0; j < 5; ++j) {
                 linearIntExpr1.addTerm(1, y[j][i]);
+                constraints.add((IloRange) cplex.addGe(y[j][i], cplex.prod(yMin, g[j][i])));
+                constraints.add((IloRange) cplex.addLe(y[j][i], cplex.prod(yMax, g[j][i])));
             }
 
             intExprs[i] = cplex.abs(cplex.diff(x[i], 1));
@@ -139,6 +198,7 @@ public class SecretSearch implements ISecretSearch{
         constraints.add((IloRange)cplex.addEq(cplex.sum(intExprs), z));
         constraints.add(cplex.addLe(linearIntExpr, days));
         constraints.add(cplex.addLe(linearNumExpr2, budget));
+        constraints.add(cplex.addEq(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
 
         if (cplex.solve()) {
@@ -154,19 +214,13 @@ public class SecretSearch implements ISecretSearch{
                 }
             }
 
-            for (int i = 0; i < 5; ++i) {
-                for (int j = 0; j < 5; ++j) {
-                    System.out.println("y" + i + j + ":" + cplex.getValue(y[i][j]));
-                }
-            }
-
-            System.out.println(hotelsRooms);
+            //System.out.println(hotelsRooms);
 
             for (int i = 0; i < hotels.size(); ++i) {
                 newScalarProduct += (cplex.getValue(x[i]) * coefficients[i]);
             }
 
-            System.out.println(newScalarProduct);
+            //System.out.println(newScalarProduct);
 
             Alternative alt = new Alternative (hotelsRooms, days);
             return new Pair<>(alt, newScalarProduct);
