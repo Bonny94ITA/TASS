@@ -41,14 +41,19 @@ public class HotelController {
 /* JSON
 HOTEL
     POST - localhost:8080/hotel/register
-    {
-        "name": "hotellino",
-        "address":"vialupa",
-        "cap":11231,
-        "city":"comodino",
-        "cellNumber":"1111111",
-        "stars":5
-    }
+{
+	"name":"hotellino",
+	"address":"vialupa",
+	"cap":11231,
+	"city":"comodino",
+	"cellNumber":"1111111",
+	"stars":5,
+	"region":"liguria",
+	"tourismTypes":[
+			{"id":1},
+			{"id":2}
+	]
+}
 
 ROOM
     POST- localhost:8080/hotel/rooms/new
