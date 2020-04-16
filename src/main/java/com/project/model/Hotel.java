@@ -18,11 +18,9 @@ public class Hotel {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "cap")
-    private Short CAP;
-
-    @Column(name = "city")
-    private String city;
+    @OneToOne
+    @JoinColumn(name="city")
+    private City city;
 
     @Column(name = "cellNumber")
     private String cellNumber;
@@ -30,36 +28,21 @@ public class Hotel {
     @Column(name = "stars")
     private Short stars;
 
-    public List<TourismTypes> getTourismTypes() {
-        return tourismTypes;
-    }
-
-    public void setTourismTypes(List<TourismTypes> tourismTypes) {
-        this.tourismTypes = tourismTypes;
-    }
-
     @Column(name = "region")
     private String region;
 
-    @ManyToMany
-    @JoinTable(
-            name = "hotel_type",
-            joinColumns = @JoinColumn(name = "hotel_id"),
-            inverseJoinColumns = @JoinColumn(name = "tourismTypes_id"))
-    private List<TourismTypes> tourismTypes;
+
 
     //CONSTRUCTORS
     public Hotel() {    }
 
-    public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars, String region, List<TourismTypes> tList) {
+    public Hotel(String name, String address, City city, String cellNumber, Short stars, String region) {
         this.name = name;
         this.address = address;
-        this.CAP = CAP;
         this.city = city;
         this.cellNumber = cellNumber;
         this.stars = stars;
         this.region = region;
-        this.tourismTypes = tList;
     }
 
     public Long getId() {
@@ -73,12 +56,7 @@ public class Hotel {
     public String getAddress() {
         return address;
     }
-
-    public Short getCAP() {
-        return CAP;
-    }
-
-    public String getCity() {
+    public City getCity() {
         return city;
     }
 
@@ -110,11 +88,7 @@ public class Hotel {
         this.address = address;
     }
 
-    public void setCAP(Short CAP) {
-        this.CAP = CAP;
-    }
-
-    public void setCity(String city) {
+    public void setCity(City city) {
         this.city = city;
     }
 
@@ -131,7 +105,6 @@ public class Hotel {
         return "Hotel{" +
                 "id=" + id +
                 ", address='" + address + '\'' +
-                ", CAP=" + CAP +
                 ", city='" + city + '\'' +
                 ", cellNumber='" + cellNumber + '\'' +
                 ", stars=" + stars +

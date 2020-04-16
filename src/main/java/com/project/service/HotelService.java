@@ -38,9 +38,10 @@ public class HotelService implements IHotelService {
         return hotel.isPresent() ? hotel.get() : null;
     }
 
+    /* DA RIFARE */
     @Override
     public Hotel addHotel(Hotel hotel){
-
+    /*
         List<TourismTypes> tourismTypesList = new ArrayList<>();
         for(TourismTypes t: hotel.getTourismTypes()){
             Optional<TourismTypes> byId = tourismTypesRepository.findById(t.getId());
@@ -50,7 +51,8 @@ public class HotelService implements IHotelService {
         }
 
         return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),hotel.getCAP(),hotel.getCity(),
-                                        hotel.getCellNumber(),hotel.getStars(),hotel.getRegion(),tourismTypesList));
+                                        hotel.getCellNumber(),hotel.getStars(),hotel.getRegion(),tourismTypesList));*/
+        return null;
     }
 
     @Override
