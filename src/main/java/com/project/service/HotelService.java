@@ -36,7 +36,7 @@ public class HotelService implements IHotelService {
 
     @Override
     public Hotel addHotel(Hotel hotel){
-        return hotelRepository.save(new Hotel(hotel.getAddress(),hotel.getCAP(),hotel.getCity(),hotel.getCellNumber(),hotel.getStars()));
+        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),hotel.getCAP(),hotel.getCity(),hotel.getCellNumber(),hotel.getStars()));
     }
 
     @Override

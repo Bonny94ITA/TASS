@@ -17,46 +17,6 @@ public class BookingsController {
     private IBookingService bookingService;
     private ISecretSearch secretSearch = ISecretSearch.getInstance();
 
-/*
-{
-	"cities":
-		[
-			{
-				"city": "Milano",
-				"region": "Lombardia"
-			},
-			{
-				"city": "Torino",
-				"region": "Piemonte"
-			},
-			{
-				"city": "Napoli",
-				"region": "Campania"
-			}
-		],
-	"days": 5,
-	"max-budget": 700,
-	"people": 3,
-	"only-region":
-		[
-			"Lombardia", "Piemonte", "Molise"
-		],
-	"only-not-region":
-		[
-			"Sicilia", "Sardegna"
-		],
-	"not-region":
-		[
-			"Sicilia", "Sardegna"
-		],
-	"max-stars": 4,
-	"min-stars": 1,
-	"tourism-type":
-		[
-			"balneare", "enogastronomico"
-		]
-}
- */
 
     @GetMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
@@ -114,4 +74,43 @@ public class BookingsController {
             ]
         }
     }
+ */
+
+/* JSON
+GET - localhost:8080/prova
+{
+	"cities":
+		[
+			{
+				"city": "Nuoro",
+				"region": "Sardegna"
+			},
+			{
+				"city": "MedioCampidano",
+				"region": "Sardegna"
+			},
+			{
+				"city": "Salerno",
+				"region": "Campania"
+			}
+		],
+	"days": 5,
+	"max-budget": 700.0,
+	"people": 3,
+	"only-regions":
+		[
+			"Sardegna", "Campania", "Sicilia"
+		],
+	"only-not-regions":
+		[
+			"Piemonte", "Lombardia"
+		],
+	"max-stars": 4,
+	"min-stars": 1,
+	"tourism-types":
+		[
+			"balneare", "enogastronomico"
+		]
+}
+
  */

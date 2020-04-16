@@ -11,6 +11,9 @@ public class Hotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "address")
     private String address;
 
@@ -28,7 +31,7 @@ public class Hotel {
 
     //CONSTRUCTORS
     public Hotel() {    }
-    public Hotel(String address, Short CAP, String city, String cellNumber, Short stars) {
+    public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars) {
         this.address = address;
         this.CAP = CAP;
         this.city = city;
@@ -39,6 +42,8 @@ public class Hotel {
     public Long getId() {
         return id;
     }
+
+    public String getName() { return name; }
 
     public String getAddress() {
         return address;
@@ -63,6 +68,8 @@ public class Hotel {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void setName(String name) {this.name = name; }
 
     public void setAddress(String address) {
         this.address = address;
