@@ -42,6 +42,7 @@ public class HotelController {
 HOTEL
     POST - localhost:8080/hotel/register
     {
+        "name": "hotellino",
         "address":"vialupa",
         "cap":11231,
         "city":"comodino",

@@ -18,43 +18,6 @@ public class BookingsController {
     private ISecretSearch secretSearch = ISecretSearch.getInstance();
 
 
-/*
-{
-	"cities":
-		[
-			{
-				"city": "Nuoro",
-				"region": "Sardegna"
-			},
-			{
-				"city": "MedioCampidano",
-				"region": "Sardegna"
-			},
-			{
-				"city": "Salerno",
-				"region": "Campania"
-			}
-		],
-	"days": 5,
-	"max-budget": 700.0,
-	"people": 3,
-	"only-regions":
-		[
-			"Sardegna", "Campania", "Sicilia"
-		],
-	"only-not-regions":
-		[
-			"Piemonte", "Lombardia"
-		],
-	"max-stars": 4,
-	"min-stars": 1,
-	"tourism-types":
-		[
-			"balneare", "enogastronomico"
-		]
-}
- */
-
     @GetMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException {
