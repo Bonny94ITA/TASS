@@ -25,7 +25,6 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> rentedItems;
 
-
     //CONSTRUCTORS
     public Booking() {}
     public Booking(List<Sojourn> sojourns, List<Item> items) {
