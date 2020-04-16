@@ -41,7 +41,11 @@ public class Hotel {
     @Column(name = "region")
     private String region;
 
-    @ElementCollection
+    @ManyToMany
+    @JoinTable(
+            name = "hotel_type",
+            joinColumns = @JoinColumn(name = "hotel_id"),
+            inverseJoinColumns = @JoinColumn(name = "tourismTypes_id"))
     private List<TourismTypes> tourismTypes;
 
     //CONSTRUCTORS
