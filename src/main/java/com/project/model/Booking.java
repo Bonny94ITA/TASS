@@ -18,8 +18,7 @@ public class Booking {
     @JoinColumn(name="booking")
     private List<Sojourn> sojourns;
 
-    @OneToMany(cascade = {CascadeType.ALL})
-    @JoinColumn(name="booking")
+    @ElementCollection
     private List<Item> rentedItems;
 
 
