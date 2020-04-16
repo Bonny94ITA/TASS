@@ -48,6 +48,7 @@ public class Hotel {
     public Hotel() {    }
 
     public Hotel(String name, String address, Short CAP, String city, String cellNumber, Short stars, String region, List<TourismTypes> tList) {
+        this.name = name;
         this.address = address;
         this.CAP = CAP;
         this.city = city;
