@@ -1,8 +1,10 @@
 package com.project.service;
 
+import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
 import com.project.model.TourismTypes;
+import com.project.repository.CityRepository;
 import com.project.repository.HotelRepository;
 import com.project.repository.RoomRepository;
 import com.project.repository.TourismTypesRepository;
@@ -24,6 +26,8 @@ public class HotelService implements IHotelService {
     RoomRepository roomRepository;
     @Autowired
     TourismTypesRepository tourismTypesRepository;
+    @Autowired
+    CityRepository cityRepository;
 
     @Override
     public List<Hotel> findAll() {
@@ -38,21 +42,31 @@ public class HotelService implements IHotelService {
         return hotel.isPresent() ? hotel.get() : null;
     }
 
-    /* DA RIFARE */
+
     @Override
     public Hotel addHotel(Hotel hotel){
-    /*
+        Optional<City> byId = cityRepository.findById(hotel.getCity().getId());
+        //if(!byId.isPresent())
+            //throw errore
+        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),byId.get(),
+                                        hotel.getCellNumber(),hotel.getStars()));
+    }
+
+    @Override
+    public City addCity(City city){
         List<TourismTypes> tourismTypesList = new ArrayList<>();
-        for(TourismTypes t: hotel.getTourismTypes()){
+        for(TourismTypes t: city.getTourismTypes()){
             Optional<TourismTypes> byId = tourismTypesRepository.findById(t.getId());
             if(byId.isPresent())
                 tourismTypesList.add(byId.get());
             //gestire quando passa un tourismtype non esistente in database
         }
+        return cityRepository.save(new City(city.getCAP(), city.getName(), city.getRegion(),tourismTypesList));
+    }
 
-        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),hotel.getCAP(),hotel.getCity(),
-                                        hotel.getCellNumber(),hotel.getStars(),hotel.getRegion(),tourismTypesList));*/
-        return null;
+    @Override
+    public TourismTypes addTourismType(TourismTypes tt){
+        return tourismTypesRepository.save(new TourismTypes(tt.getType()));
     }
 
     @Override

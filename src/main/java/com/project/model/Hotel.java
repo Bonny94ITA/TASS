@@ -18,31 +18,25 @@ public class Hotel {
     @Column(name = "address")
     private String address;
 
-    @OneToOne
-    @JoinColumn(name="city")
-    private City city;
-
     @Column(name = "cellNumber")
     private String cellNumber;
 
     @Column(name = "stars")
     private Short stars;
 
-    @Column(name = "region")
-    private String region;
-
-
+    @ManyToOne
+    @JoinColumn(name="city") //, insertable = false, updatable = false)
+    private City city;
 
     //CONSTRUCTORS
     public Hotel() {    }
 
-    public Hotel(String name, String address, City city, String cellNumber, Short stars, String region) {
+    public Hotel(String name, String address, City city, String cellNumber, Short stars) {
         this.name = name;
         this.address = address;
         this.city = city;
         this.cellNumber = cellNumber;
         this.stars = stars;
-        this.region = region;
     }
 
     public Long getId() {
@@ -76,13 +70,6 @@ public class Hotel {
         this.name = name;
     }
 
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
 
     public void setAddress(String address) {
         this.address = address;
