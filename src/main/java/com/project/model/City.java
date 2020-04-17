@@ -11,18 +11,13 @@ public class City {
     private Long id;
 
     @Column(name = "cap")
-    private Short CAP;
+    private int CAP;
 
-    @Column(name = "city")
-    private String city;
+    @Column(name = "name")
+    private String name;
 
-    public List<TourismTypes> getTourismTypes() {
-        return tourismTypes;
-    }
-
-    public void setTourismTypes(List<TourismTypes> tourismTypes) {
-        this.tourismTypes = tourismTypes;
-    }
+    @Column(name = "region")
+    private String region;
 
     @ManyToMany
     @JoinTable(
@@ -31,24 +26,49 @@ public class City {
             inverseJoinColumns = @JoinColumn(name = "tourismTypes_id"))
     private List<TourismTypes> tourismTypes;
 
-    public City(Short CAP, String city) {
-        this.CAP = CAP;
-        this.city = city;
+    public Long getId() {
+        return id;
     }
 
-    public Short getCAP() {
+    public City(){}
+    public City(int CAP, String name, String region, List<TourismTypes> tourismTypes) {
+        this.CAP = CAP;
+        this.name = name;
+        this.region = region;
+        this.tourismTypes = tourismTypes;
+    }
+
+    public int getCAP() {
         return CAP;
     }
 
-    public void setCAP(Short CAP) {
+    public void setCAP(int CAP) {
         this.CAP = CAP;
     }
 
-    public String getCity() {
-        return city;
+    public String getName() {
+        return name;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public List<TourismTypes> getTourismTypes() {
+        return tourismTypes;
+    }
+
+    public void setTourismTypes(List<TourismTypes> tourismTypes) {
+        this.tourismTypes = tourismTypes;
+    }
+    // può dare problemi perchè si modifica il puntatore, forse meglio clear-> addall
+
 }

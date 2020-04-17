@@ -1,9 +1,7 @@
 package com.project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.model.Guest;
-import com.project.model.Hotel;
-import com.project.model.Room;
+import com.project.model.*;
 import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +35,16 @@ public class HotelController {
         Room room = mapper.convertValue(requestParams.get("room"),Room.class);
         return hotelService.addRoom(hotelId,room);
     }
+
+    @PostMapping(value = "/city/new")
+    public City postAddCity(@RequestBody City city){ return hotelService.addCity(city); }
+
+    @PostMapping(value = "/tourismType/new")
+    public TourismTypes postAddTourismTypes(@RequestBody TourismTypes tt){ return hotelService.addTourismType(tt); }
+
+    //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già
+    // su tourismtype ( il contatore di spring non si aggiorna sulle modifiche del db?)
+
 }
 /* JSON
 HOTEL
@@ -44,15 +52,9 @@ HOTEL
 {
 	"name":"hotellino",
 	"address":"vialupa",
-	"cap":11231,
-	"city":"comodino",
+	"city":{"id":1},
 	"cellNumber":"1111111",
-	"stars":5,
-	"region":"liguria",
-	"tourismTypes":[
-			{"id":1},
-			{"id":2}
-	]
+	"stars":5
 }
 
 ROOM
@@ -66,4 +68,21 @@ ROOM
     }
 
     GET - localhost:8080/hotel/rooms/1      (per vedere le stanze di un hotel, id è riferito a stanza)
+
+ CITY
+    POST -localhost:8080/city/new
+    {
+        "cap":55555,
+        "name":"torino"
+	    "region":"piemonte",
+        "tourismTypes":[
+            {"id":1},
+        ]
+    }
+
+ TOURISMTYPES
+    POST - localhost:8080/tourismType/new
+    {
+        "type": "montagna"
+    }
  */

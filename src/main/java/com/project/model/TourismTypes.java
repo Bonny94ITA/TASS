@@ -10,12 +10,16 @@ public class TourismTypes{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Long getId() {
-        return id;
+    @Column(name = "type")
+    private String type;
+
+    public TourismTypes(){}
+    public TourismTypes(String type){
+        this.type = type;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getType() {
@@ -26,7 +30,5 @@ public class TourismTypes{
         this.type = type;
     }
 
-    @Column(name = "type")
-    private String type;
 
 }
