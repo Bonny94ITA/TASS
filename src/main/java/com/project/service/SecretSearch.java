@@ -130,9 +130,7 @@ public class SecretSearch implements ISecretSearch{
         for (Hotel h : hotelList) {
             clips.assertString("(hotel (name " + h.getName() + ") " +
                                          "(tr " + h.getCity().getName() + ") " +
-                                         "(stars " + 2 + ") " +
-                                         "(price-per-night 0.0) " +
-                                         "(free-percent 100))");
+                                         "(stars " + h.getStars() + "))");
         }
 
         for (TourismType tt : tourismTypeList) {
@@ -147,8 +145,7 @@ public class SecretSearch implements ISecretSearch{
             clips.assertString("(tourism-resort " +
                                          "(name " + city.getName() + ") " +
                                          "(region " + city.getRegion() + ") " +
-                                         "(type " + str + ") " +
-                                         "(score 2 1))");
+                                         "(type " + str + "))");
         }
 
         clips.run();

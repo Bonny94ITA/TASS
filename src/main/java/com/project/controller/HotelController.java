@@ -25,8 +25,8 @@ public class HotelController {
         return hotelService.findRooms(hotelId);
     }
 
-    //@PostMapping(value = "/hotel/register")
-    //public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
+    @PostMapping(value = "/hotel/register")
+    public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
 
     @PostMapping(value = "/hotel/rooms/new")
     public Room postAddRoom(@RequestBody Map<String,Object> requestParams){

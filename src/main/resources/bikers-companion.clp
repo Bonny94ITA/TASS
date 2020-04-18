@@ -36,36 +36,18 @@
 (deftemplate MAIN::hotel-attribute
  (slot name)
  (slot certainty (type FLOAT) (default ?NONE))
- (multislot unknown-variables (type SYMBOL) (default ?NONE))
- (slot free-percent (type INTEGER) (range 0 100)))
-
-(deftemplate MAIN::distance
-  (slot loc1 (type SYMBOL) (default ?NONE))
-  (slot loc2 (type SYMBOL) (default ?NONE))
-  (slot dist (type INTEGER) (default ?NONE)))
-
-(deftemplate MAIN::alternative
-  (multislot hotels (type SYMBOL) (default ?NONE))
-  (multislot times (type INTEGER) (default ?NONE))
-  (slot total-price (type FLOAT) (default ?NONE))
-  (multislot certainty (type FLOAT) (default ?DERIVE))
-  (slot alt-certainty (type FLOAT) (default ?DERIVE))
-  (slot zero-times (type INTEGER) (default ?NONE))
-  (slot flag (default FALSE)))
+ (multislot unknown-variables (type SYMBOL) (default ?NONE)))
 
 (deftemplate MAIN::hotel
   (slot name (default ?NONE))
   (slot tr (type SYMBOL))
-  (slot stars (type INTEGER) (range 1 4))
-  (slot price-per-night (type FLOAT) (default ?DERIVE))
-  (slot free-percent (type INTEGER) (default ?NONE) (range 0 100)))
+  (slot stars (type INTEGER) (range 1 5)))
 
 ;tipo di turismo
 (deftemplate MAIN::tourism-resort
   (slot name (type SYMBOL))
   (slot region (type SYMBOL))
-  (multislot type (type SYMBOL))
-  (multislot score (type INTEGER) (range 0 5)))
+  (multislot type (type SYMBOL)))
 
 ;meta regole if then
 (deftemplate MAIN::rule
@@ -77,7 +59,7 @@
    (slot tt (type SYMBOL)))
 
 (deffunction MAIN::get-hotel-attribute-list ()
-  (bind ?facts (find-all-facts ((?f hotel-attribute)) (and (> ?f:free-percent 0) (> ?f:certainty 0.0)))))
+  (bind ?facts (find-all-facts ((?f hotel-attribute)) (> ?f:certainty 0.0))))
 
 (defrule MAIN::start
   (declare (salience 10000))
@@ -173,28 +155,6 @@
   (bind ?mincf (min (abs ?per1) (abs ?per2)))
   (modify ?rem2 (certainty (/ (+ ?per1 ?per2) (- 1 ?mincf)))))
 ;; RULES COMBINE CERTAINTIES END ;;
-
-(defrule MAIN::filter-alternatives-about-zero-times-values
-  (declare (auto-focus TRUE))
-    ?a1 <- (alternative (zero-times ?zt1) (alt-certainty ?s1) (flag TRUE))
-    ?a2 <- (alternative (zero-times ?zt2) (alt-certainty ?s2&:(<= ?s2 ?s1)) (flag TRUE))
-  (test (neq ?a1 ?a2))
-  (test (eq ?zt1 ?zt2))
-  =>
-  (retract ?a2))
-
-(defrule MAIN::filter-alternatives-about-hotels-with-same-location
-  (declare (auto-focus TRUE))
-    ?a <- (alternative (hotels $?hotels-name) (times $?allocated-time) (flag TRUE))
-  =>
-  (bind ?flag TRUE)
-  (loop-for-count (?cnt1 1 (length$ ?hotels-name)) do
-    (do-for-fact ((?f hotel)) (eq ?f:name (nth$ ?cnt1 ?hotels-name)) (bind ?tr1 ?f:tr))
-    (loop-for-count (?cnt2 (+ ?cnt1 1) (length$ ?hotels-name)) do
-      (do-for-fact ((?f hotel)) (eq ?f:name (nth$ ?cnt2 ?hotels-name)) (bind ?tr2 ?f:tr))
-      (if (and (eq ?tr1 ?tr2) (> (nth$ ?cnt1 ?allocated-time) 0) (> (nth$ ?cnt2 ?allocated-time) 0))
-        then (bind ?flag FALSE))))
-  (if (eq ?flag FALSE) then (retract ?a)))
 
 ;;*****************
 ;; The RULES module
@@ -372,7 +332,7 @@
 
 ;;genera gli hotel attribute
 (defrule HOTELS::generate-hotels
-  (hotel (name ?name) (tr ?tr) (stars ?s) (price-per-night ?ppn) (free-percent ?fp))
+  (hotel (name ?name) (tr ?tr) (stars ?s))
   (tourism-resort (name ?tr) (region ?r) (type $? ?t $?))
   (tourism-type (tt ?t))
   (attribute (name best-region) (value ?region) (certainty ?certainty-1))
@@ -390,5 +350,4 @@
   (assert (hotel-attribute
              (name ?name)
              (certainty (average (create$ ?certainty-1 ?certainty-2 ?certainty-3 ?certainty-4 ?certainty-5)))
-             (unknown-variables ?uv)
-             (free-percent ?fp))))
+             (unknown-variables ?uv))))
