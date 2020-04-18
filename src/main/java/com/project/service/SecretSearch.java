@@ -248,7 +248,7 @@ public class SecretSearch implements ISecretSearch{
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
                         hm.put("HotelName", hotels.get(j));
-                        hm.put("RoomId", i);
+                        hm.put("RoomId", (i + 1));
                         hm.put("DaysInRoom", cplex.getValue(y[i][j]));
                         hotelsRooms.add(hm);
                     }
