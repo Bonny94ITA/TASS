@@ -144,7 +144,6 @@ public class SecretSearch implements ISecretSearch{
             List<TourismType> types = city.getTourismTypes();
             for (TourismType tt : types) { str += tt.getType() + " "; }
             str = str.substring(0, str.length() - 1);
-            System.out.println(str);
             clips.assertString("(tourism-resort " +
                                          "(name " + city.getName() + ") " +
                                          "(region " + city.getRegion() + ") " +
@@ -153,12 +152,6 @@ public class SecretSearch implements ISecretSearch{
         }
 
         clips.run();
-
-        for (FactInstance fi : clips.getFactList()) {
-            for (SlotValue sv : fi.getSlotValues()) {
-                System.out.println(sv.getSlotName() + ": " + sv.getSlotValue());
-            }
-        }
 
         String evalStr = "(MAIN::get-hotel-attribute-list)";
         MultifieldValue mv = (MultifieldValue) clips.eval(evalStr);
