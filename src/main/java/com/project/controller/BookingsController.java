@@ -26,8 +26,8 @@ public class BookingsController {
         Integer days = (Integer)requestParams.get("days");
         Double maxBudget = (Double)requestParams.get("max-budget");
         Integer numPeople = (Integer)requestParams.get("people");
-        List<String> onlyRegion = (List<String>)requestParams.get("only-regions");
-        List<String> onlyNotRegion = (List<String>)requestParams.get("only-not-regions");
+        String onlyRegion = (String)requestParams.get("only-region");
+        String onlyNotRegion = (String)requestParams.get("only-not-region");
         Integer maxStars =(Integer)requestParams.get("max-stars");
         Integer minStars =(Integer)requestParams.get("min-stars");
         List<String> tourismTypes = (List<String>)requestParams.get("tourism-types");

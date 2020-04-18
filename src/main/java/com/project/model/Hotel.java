@@ -50,6 +50,7 @@ public class Hotel {
     public String getAddress() {
         return address;
     }
+
     public City getCity() {
         return city;
     }

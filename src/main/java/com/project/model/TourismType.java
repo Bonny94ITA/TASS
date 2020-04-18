@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "tourismType")
-public class TourismTypes{
+public class TourismType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,8 +13,8 @@ public class TourismTypes{
     @Column(name = "type")
     private String type;
 
-    public TourismTypes(){}
-    public TourismTypes(String type){
+    public TourismType(){}
+    public TourismType(String type){
         this.type = type;
     }
 
@@ -29,6 +29,4 @@ public class TourismTypes{
     public void setType(String type) {
         this.type = type;
     }
-
-
 }

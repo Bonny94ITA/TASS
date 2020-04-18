@@ -3,7 +3,7 @@ package com.project.service;
 import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
-import com.project.model.TourismTypes;
+import com.project.model.TourismType;
 import com.project.repository.CityRepository;
 import com.project.repository.HotelRepository;
 import com.project.repository.RoomRepository;
@@ -30,7 +30,7 @@ public class HotelService implements IHotelService {
     CityRepository cityRepository;
 
     @Override
-    public List<Hotel> findAll() {
+    public List<Hotel> findAllHotels() {
         List<Hotel> hotels = new ArrayList<>();
         hotelRepository.findAll().forEach(hotels::add);
         return hotels;
@@ -54,9 +54,9 @@ public class HotelService implements IHotelService {
 
     @Override
     public City addCity(City city){
-        List<TourismTypes> tourismTypesList = new ArrayList<>();
-        for(TourismTypes t: city.getTourismTypes()){
-            Optional<TourismTypes> byId = tourismTypesRepository.findById(t.getId());
+        List<TourismType> tourismTypesList = new ArrayList<>();
+        for(TourismType t: city.getTourismTypes()){
+            Optional<TourismType> byId = tourismTypesRepository.findById(t.getId());
             if(byId.isPresent())
                 tourismTypesList.add(byId.get());
             //gestire quando passa un tourismtype non esistente in database
@@ -65,8 +65,8 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public TourismTypes addTourismType(TourismTypes tt){
-        return tourismTypesRepository.save(new TourismTypes(tt.getType()));
+    public TourismType addTourismType(TourismType tt){
+        return tourismTypesRepository.save(new TourismType(tt.getType()));
     }
 
     @Override
@@ -86,4 +86,17 @@ public class HotelService implements IHotelService {
         return h!=null ? roomRepository.findByHotel(h) : null;
     }
 
+    @Override
+    public List<TourismType> findAllTourismTypes() {
+        List<TourismType> tt = new ArrayList<>();
+        tourismTypesRepository.findAll().forEach(tt::add);
+        return tt;
+    }
+
+    @Override
+    public List<City> findAllCities() {
+        List<City> cities = new ArrayList<>();
+        cityRepository.findAll().forEach(cities::add);
+        return cities;
+    }
 }

@@ -14,9 +14,10 @@ public class HotelController {
     @Autowired
     IHotelService hotelService;
 
+
     @GetMapping("/hotels")
     public List<Hotel> getAllHotels() {
-        return hotelService.findAll();
+        return hotelService.findAllHotels();
     }
 
     @GetMapping("/hotel/rooms/{id}")
@@ -24,8 +25,8 @@ public class HotelController {
         return hotelService.findRooms(hotelId);
     }
 
-    @PostMapping(value = "/hotel/register")
-    public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
+    //@PostMapping(value = "/hotel/register")
+    //public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
 
     @PostMapping(value = "/hotel/rooms/new")
     public Room postAddRoom(@RequestBody Map<String,Object> requestParams){
@@ -40,7 +41,7 @@ public class HotelController {
     public City postAddCity(@RequestBody City city){ return hotelService.addCity(city); }
 
     @PostMapping(value = "/tourismType/new")
-    public TourismTypes postAddTourismTypes(@RequestBody TourismTypes tt){ return hotelService.addTourismType(tt); }
+    public TourismType postAddTourismTypes(@RequestBody TourismType tt){ return hotelService.addTourismType(tt); }
 
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già
     // su tourismtype ( il contatore di spring non si aggiorna sulle modifiche del db?)
@@ -52,7 +53,7 @@ HOTEL
 {
 	"name":"hotellino",
 	"address":"vialupa",
-	"city":{"id":1},
+	"city": {"id":1},
 	"cellNumber":"1111111",
 	"stars":5
 }

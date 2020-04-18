@@ -3,12 +3,12 @@ package com.project.service;
 import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
-import com.project.model.TourismTypes;
+import com.project.model.TourismType;
 
 import java.util.List;
 
 public interface IHotelService  {
-    List<Hotel> findAll();
+    List<Hotel> findAllHotels();
 
     Hotel findById(Long id);
 
@@ -16,9 +16,13 @@ public interface IHotelService  {
 
     City addCity(City city);
 
-    TourismTypes addTourismType(TourismTypes tt);
+    TourismType addTourismType(TourismType tt);
 
     Room addRoom(Long h, Room r);
 
     List<Room> findRooms(long h);
+
+    List<TourismType> findAllTourismTypes();
+
+    List<City> findAllCities();
 }

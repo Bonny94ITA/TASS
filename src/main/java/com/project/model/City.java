@@ -24,14 +24,14 @@ public class City {
             name = "tourism_type_city",
             joinColumns = @JoinColumn(name = "city_id"),
             inverseJoinColumns = @JoinColumn(name = "tourismTypes_id"))
-    private List<TourismTypes> tourismTypes;
+    private List<TourismType> tourismTypes;
 
     public Long getId() {
         return id;
     }
 
     public City(){}
-    public City(int CAP, String name, String region, List<TourismTypes> tourismTypes) {
+    public City(int CAP, String name, String region, List<TourismType> tourismTypes) {
         this.CAP = CAP;
         this.name = name;
         this.region = region;
@@ -62,11 +62,11 @@ public class City {
         this.region = region;
     }
 
-    public List<TourismTypes> getTourismTypes() {
+    public List<TourismType> getTourismTypes() {
         return tourismTypes;
     }
 
-    public void setTourismTypes(List<TourismTypes> tourismTypes) {
+    public void setTourismTypes(List<TourismType> tourismTypes) {
         this.tourismTypes = tourismTypes;
     }
     // può dare problemi perchè si modifica il puntatore, forse meglio clear-> addall
