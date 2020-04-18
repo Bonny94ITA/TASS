@@ -4,15 +4,13 @@ import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
 import com.project.model.TourismType;
-import com.project.repository.CityRepository;
-import com.project.repository.HotelRepository;
-import com.project.repository.RoomRepository;
-import com.project.repository.TourismTypesRepository;
+import com.project.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +26,8 @@ public class HotelService implements IHotelService {
     TourismTypesRepository tourismTypesRepository;
     @Autowired
     CityRepository cityRepository;
+    @Autowired
+    SojournRepository sojournRepository;
 
     @Override
     public List<Hotel> findAllHotels() {
@@ -99,4 +99,15 @@ public class HotelService implements IHotelService {
         cityRepository.findAll().forEach(cities::add);
         return cities;
     }
+
+    @Override
+    public List<Room> findFreeRooms(Date arrival, Date departure, String city){
+        return sojournRepository.findAllRoom(arrival,departure,city);
+    }
+
+    /* il soggiorno nuovo viene creato quando si paga una prenotazione e quindi blocca la stanza
+    così per cercare le stanze libere basta guardare nei soggiorni esistenti
+     */
+
+    /*per la ricerca l'utente*/
 }

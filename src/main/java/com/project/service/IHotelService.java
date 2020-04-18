@@ -5,6 +5,7 @@ import com.project.model.Hotel;
 import com.project.model.Room;
 import com.project.model.TourismType;
 
+import java.util.Date;
 import java.util.List;
 
 public interface IHotelService  {
@@ -25,4 +26,6 @@ public interface IHotelService  {
     List<TourismType> findAllTourismTypes();
 
     List<City> findAllCities();
+
+    List<Room> findFreeRooms(Date arrival, Date departure, String city);
 }

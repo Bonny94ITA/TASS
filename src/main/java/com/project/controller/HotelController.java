@@ -6,6 +6,9 @@ import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +28,17 @@ public class HotelController {
         return hotelService.findRooms(hotelId);
     }
 
+    @PostMapping(value ="/search")
+    public List<Room> findFreeRooms(@RequestBody Map<String,Object> requestParams){
+        ObjectMapper mapper = new ObjectMapper();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        mapper.setDateFormat(df);
+        Date arrival = mapper.convertValue(requestParams.get("arrival"),Date.class);
+        Date departure = mapper.convertValue(requestParams.get("departure"),Date.class);
+        String city = mapper.convertValue(requestParams.get("city"),String.class);
+        return hotelService.findFreeRooms(arrival,departure,city);
+    }
+
     @PostMapping(value = "/hotel/register")
     public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
 
@@ -42,6 +56,8 @@ public class HotelController {
 
     @PostMapping(value = "/tourismType/new")
     public TourismType postAddTourismTypes(@RequestBody TourismType tt){ return hotelService.addTourismType(tt); }
+
+
 
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già
     // su tourismtype ( il contatore di spring non si aggiorna sulle modifiche del db?)
@@ -86,4 +102,13 @@ ROOM
     {
         "type": "montagna"
     }
+
+    CERCA STANZE LIBERE
+    POST -localhost:8080/search
+    {
+	"arrival":"20/05/2020",
+	"departure":"22/05/2020",
+	"city":"torino"
+    }
+
  */
