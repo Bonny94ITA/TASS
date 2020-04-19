@@ -8,6 +8,10 @@ import net.sf.clipsrules.jni.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import java.util.*;
 
 @Service
@@ -36,7 +40,7 @@ public class SecretSearch implements ISecretSearch{
     }
 
     @Override
-    public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
+    public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException, ParseException {
 
         List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
@@ -46,7 +50,8 @@ public class SecretSearch implements ISecretSearch{
 
         for(int i=0;i<hotelList.size();i++){
             Long hotel_id = hotelList.get(i).getId();
-            List<Room> rooms = hotelService.findRooms(hotel_id);
+            List<Room> rooms = hotelService.findFreeRooms(new SimpleDateFormat("dd/MM/yyyy").parse("17/1/1994"),
+                    new SimpleDateFormat("dd/MM/yyyy").parse("22/1/1994"), hotel_id);
             roomList.add(rooms);
             if(max_room<rooms.size())
                 max_room=rooms.size();

@@ -27,5 +27,7 @@ public interface IHotelService  {
 
     List<City> findAllCities();
 
-    List<Room> findFreeRooms(Date arrival, Date departure, String city);
+    List<Room> findFreeRooms(Date arrival, Date departure, String city, long h);
+
+    List<Room> findFreeRooms(Date arrival, Date departure, long h);
 }

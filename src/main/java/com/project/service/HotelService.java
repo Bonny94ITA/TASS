@@ -101,8 +101,46 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public List<Room> findFreeRooms(Date arrival, Date departure, String city){
-        return sojournRepository.findAllRoom(arrival,departure,city);
+    public List<Room> findFreeRooms(Date arrival, Date departure, String city, long hotelId){
+        List<Room> freeRooms = new ArrayList<>();
+        List<Hotel> allHotels = this.findAllHotels();
+
+        for (Hotel h : allHotels) {
+            List<Object[]> freeRoomsOfH = sojournRepository.findAllRoom(arrival,departure,city,hotelId);
+
+            for () {
+                for () {
+
+                }
+            }
+
+            for (Object[] r : freeRoomsOfH) {
+                Hotel hotel = this.findById((long) ((java.math.BigInteger)r[3]).intValueExact());
+                Room room = new Room((Integer)r[1], hotel, (Integer)r[2]);
+                room.setId((long) ((java.math.BigInteger)r[0]).intValueExact());
+                freeRooms.add(room);
+            }
+        }
+
+        return freeRooms;
+    }
+
+    @Override
+    public List<Room> findFreeRooms(Date arrival, Date departure, long hotelId) {
+        List<Room> freeRooms = new ArrayList<>();
+        List<Hotel> allHotels = this.findAllHotels();
+
+        for (Hotel h : allHotels) {
+            List<Object[]> freeRoomsOfH = sojournRepository.findAllRoom(arrival,departure,hotelId);
+            for (Object[] r : freeRoomsOfH) {
+                Hotel hotel = this.findById((long) ((java.math.BigInteger)r[3]).intValueExact());
+                Room room = new Room((Integer)r[1], hotel, (Integer)r[2]);
+                room.setId((long) ((java.math.BigInteger)r[0]).intValueExact());
+                freeRooms.add(room);
+            }
+        }
+
+        return freeRooms;
     }
 
     /* il soggiorno nuovo viene creato quando si paga una prenotazione e quindi blocca la stanza

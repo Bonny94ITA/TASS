@@ -13,16 +13,42 @@ import java.util.List;
 @Repository
 public interface SojournRepository  extends CrudRepository<Sojourn, Long> {
     //query per ricerca clips stanze libere in dati giorni
+    @Query(value = "SELECT room.* " +
+                   "FROM sojourn, room, hotel " +
+                   "WHERE (:arrival <= sojourn.departure OR :departure >= sojourn.arrival) AND " +
+                          "sojourn.room = room.id AND " +
+                          "hotel.id = room.hotel AND " +
+                          "NOT EXISTS (SELECT * FROM payment, booking " +
+                                     "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
+                   "UNION " +
+                   "SELECT room.* " +
+                   "FROM room, hotel " +
+                   "WHERE hotel.id = room.hotel AND " +
+                         "NOT EXISTS (SELECT * FROM booking, sojourn " +
+                                     "WHERE sojourn.booking = booking.id AND sojourn.room = room.id)", nativeQuery = true)
+    List<Object[]> findAllRoom(@Param("arrival") Date arrival,@Param("departure") Date departure);
+
     //query per ricerca normale stanze libere, giorni ,città
-    @Query(value = "SELECT room.*\n" +
-            "FROM sojourn, room, hotel, city, booking\n" +
-            "WHERE sojourn.arrival = :arrival AND sojourn.departure = :departure AND\n" +
-            "    sojourn.room = room.id AND \n" +
-            "    hotel.id = room.hotel AND \n" +
-            "    city.id = hotel.city AND\n" +
-            "    city.name = :city AND \n" +
-            "    NOT EXISTS (SELECT * FROM payment \n" +
-            "        WHERE payment.booking = booking.id)\n" +
-            "    AND booking.id = sojourn.booking", nativeQuery = true)
-    List<Room> findAllRoom(@Param("arrival") Date arrival,@Param("departure") Date departure,@Param("city") String cityName);
+    @Query(value = "SELECT room.* " +
+                   "FROM sojourn, room, hotel, city " +
+                   "WHERE (:arrival <= sojourn.departure OR :departure >= sojourn.arrival) AND " +
+                          "sojourn.room = room.id AND " +
+                          "hotel.id = room.hotel AND " +
+                          "city.id = hotel.city AND " +
+                          "city.name = :city AND " +
+                          "NOT EXISTS (SELECT * FROM payment, booking " +
+                                      "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
+                   "UNION " +
+                   "SELECT room.* " +
+                   "FROM room, hotel, city " +
+                   "WHERE hotel.id = room.hotel AND " +
+                         "city.id = hotel.city AND " +
+                         "city.name = :city AND " +
+                         "NOT EXISTS (SELECT * FROM booking, sojourn " +
+                                     "WHERE sojourn.booking = booking.id AND sojourn.room = room.id)", nativeQuery = true)
+    List<Object[]> findAllRoom(@Param("arrival") Date arrival,@Param("departure") Date departure,@Param("city") String cityName);
 }
+
+
+
+

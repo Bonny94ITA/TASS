@@ -21,7 +21,7 @@ public class BookingsController {
 
     @GetMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
-            throws CLIPSException, IloException {
+            throws CLIPSException, IloException, ParseException {
         List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
         Integer days = (Integer)requestParams.get("days");
         Double maxBudget = (Double)requestParams.get("max-budget");
