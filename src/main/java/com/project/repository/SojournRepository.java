@@ -18,7 +18,7 @@ public interface SojournRepository  extends CrudRepository<Sojourn, Long> {
             "sojourn.room = room.id AND " +
             "hotel.id = room.hotel AND " +
             "city.id = hotel.city AND " +
-            "city.name = ':city AND " +
+            "city.name = :city AND " +
             "NOT EXISTS (SELECT * FROM payment, booking " +
             "WHERE payment.booking = booking.id AND " +
             "booking.id = sojourn.booking) " +
@@ -27,7 +27,7 @@ public interface SojournRepository  extends CrudRepository<Sojourn, Long> {
             "FROM room, hotel, city " +
             "WHERE hotel.id = room.hotel AND " +
             "city.id = hotel.city AND " +
-            "city.name = 'Cagliari' AND " +
+            "city.name = :city AND " +
             "NOT EXISTS (SELECT * FROM booking, sojourn " +
             "WHERE sojourn.booking = booking.id AND sojourn.room = room.id)", nativeQuery = true)
     List<java.math.BigInteger> findAllFreeRoomsIn(@Param("arrival") Date arrival,@Param("departure") Date departure,@Param("city") String cityName);
