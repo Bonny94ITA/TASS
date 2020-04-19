@@ -48,8 +48,10 @@ public class SecretSearch implements ISecretSearch{
 
         for(Room r: roomFreeList){
             Hotel h = r.getHotel();
-            if(!hotelList.contains(h))
+            if(!hotelList.contains(h)) {
                 hotelList.add(h);
+                roomList.add(new ArrayList<>());
+            }
             roomList.get(hotelList.indexOf(h)).add(r);
         }
         int max_room = 0;
