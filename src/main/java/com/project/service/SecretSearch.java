@@ -41,25 +41,28 @@ public class SecretSearch implements ISecretSearch{
         Date departure = (Date)args[10]; // input
 
         List<Room> roomFreeList = hotelService.findFreeRooms(arrival,departure);
-        List<Hotel> hotelList = new ArrayList<>();
-        List<List<Room>> roomList = new ArrayList<>();
+        List<Hotel> hotelList = hotelService.findAllHotels();
+        Map<Long, List<Room>> hotelRooms = new HashMap<>();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
+        int max_room = 0;
 
         for(Room r: roomFreeList){
             Hotel h = r.getHotel();
-            if(!hotelList.contains(h)) {
-                hotelList.add(h);
-                roomList.add(new ArrayList<>());
+
+            if (!hotelRooms.containsKey(h.getId())) {
+                hotelRooms.put(h.getId(), new ArrayList<>());
             }
-            roomList.get(hotelList.indexOf(h)).add(r);
+
+            List<Room> rooms = hotelRooms.get(h.getId());
+            rooms.add(r);
+            hotelRooms.replace(h.getId(), rooms);
         }
-        int max_room = 0;
-        for (List l : roomList){
+
+        for (List l : hotelRooms.values()){
             if (max_room < l.size())
                 max_room = l.size();
         }
-
 
         /*List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
@@ -80,17 +83,20 @@ public class SecretSearch implements ISecretSearch{
 
         for(int i=0;i<hotelList.size();i++){
             Hotel h = hotelList.get(i);
-            List<Room> rooms = roomList.get(i);
-            for(int j=0;j<max_room;j++) {
-                if(j>=rooms.size()){
-                    pricePerNight[j][i] = Double.MAX_VALUE;
-                    places[j][i] = 0;
-                }else{
-                    Room r = rooms.get(j);
-                    pricePerNight[j][i] = r.getPricePerNight();
-                    places[j][i] = r.getNumPlaces();
+            List<Room> rooms = hotelRooms.get(h.getId());
+
+            if (rooms == null) { rooms = new ArrayList<>(); }
+
+                for(int j=0;j<max_room;j++) {
+                    if(j>=rooms.size()){
+                        pricePerNight[j][i] = Double.MAX_VALUE;
+                        places[j][i] = 0;
+                    }else{
+                        Room r = rooms.get(j);
+                        pricePerNight[j][i] = r.getPricePerNight();
+                        places[j][i] = r.getNumPlaces();
+                    }
                 }
-            }
         }
 
         List<Alternative> alternatives = new LinkedList<>();
