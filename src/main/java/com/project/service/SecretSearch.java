@@ -37,7 +37,6 @@ public class SecretSearch implements ISecretSearch{
 
     @Override
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
-
         List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();

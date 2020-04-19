@@ -22,13 +22,6 @@ public class Room {
 
     //CONSTRUCTORS
     public Room() {}
-    public Room(Long id, int numPlaces, Hotel hotel, int pricePerNight) { //costruttore di prova da eliminare
-        this.id = id;
-        this.numPlaces = numPlaces;
-        this.hotel = hotel;
-        this.pricePerNight = pricePerNight;
-    }
-
     public Room(int numPlaces, Hotel hotel, int pricePerNight) {
         this.numPlaces = numPlaces;
         this.hotel = hotel;

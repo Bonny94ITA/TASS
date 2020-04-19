@@ -30,14 +30,17 @@ public class HotelController {
     }
 
     @PostMapping(value ="/search")
-    public List<BigInteger> findFreeRooms(@RequestBody Map<String,Object> requestParams){
+    public List<Room> findFreeRooms(@RequestBody Map<String,Object> requestParams){
         ObjectMapper mapper = new ObjectMapper();
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         mapper.setDateFormat(df);
         Date arrival = mapper.convertValue(requestParams.get("arrival"),Date.class);
         Date departure = mapper.convertValue(requestParams.get("departure"),Date.class);
         String city = mapper.convertValue(requestParams.get("city"),String.class);
-        return hotelService.findFreeRooms(arrival,departure,city);
+        if (city!=null)
+            return hotelService.findFreeRooms(arrival,departure,city);
+        else
+            return hotelService.findFreeRooms(arrival,departure);
     }
 
     @PostMapping(value = "/hotel/register")
