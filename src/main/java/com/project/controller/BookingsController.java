@@ -7,7 +7,10 @@ import ilog.concert.IloException;
 import net.sf.clipsrules.jni.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -31,8 +34,9 @@ public class BookingsController {
         Integer maxStars =(Integer)requestParams.get("max-stars");
         Integer minStars =(Integer)requestParams.get("min-stars");
         List<String> tourismTypes = (List<String>)requestParams.get("tourism-types");
-        Date arrival = (Date)requestParams.get("arrival");
-        Date departure = (Date)requestParams.get("departure");
+        SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
+        Date arrival = sf.parse((String)requestParams.get("arrival"));
+        Date departure = sf.parse((String)requestParams.get("departure"));
 
         return secretSearch.getAllAlternatives(cities, days, maxBudget, numPeople, onlyRegion,
                                                onlyNotRegion, maxStars, minStars, tourismTypes, arrival, departure);
