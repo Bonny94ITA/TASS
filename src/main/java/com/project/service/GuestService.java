@@ -74,5 +74,6 @@ public class GuestService implements IGuestService {
             g.addBooking(booking);
             guestRepository.save(g);
         }
+        //else throw exception
     }
 }

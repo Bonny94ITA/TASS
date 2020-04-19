@@ -2,14 +2,13 @@ package com.project.service;
 
 import com.project.model.*;
 import com.project.repository.BookingRepository;
-import com.project.repository.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -30,22 +29,14 @@ public class BookingService implements IBookingService {
 
 
     @Override
-    public Booking addBook(){
-        return bookingRepository.save(new Booking());
-    }
-
-    @Override // forse da cancellare
-    public Booking addBook(Booking booking) {
-        return bookingRepository.save(new Booking(booking.getSojourns(),booking.getRentedItems()));
-    }
-
-    @Override
-    public Booking addBook(Booking booking, Long guestId){
+    public Booking addBook(Booking booking, Long guestId, boolean paid){
         //cerco items
         List<Item> itemsFound = new ArrayList();
         for (Item i : booking.getRentedItems()) {
             Long itemId = i.getId();
-            Item item = itemService.findById(itemId);       // gestire errore se item è null
+            Item item = itemService.findById(itemId);
+            //if(item == null)
+                //throw exception
             itemsFound.add(item);
         }
 
@@ -54,7 +45,8 @@ public class BookingService implements IBookingService {
         for(Sojourn s : booking.getSojourns()){
             //cerco room
             Room room = roomService.findById(s.getRoom().getId());
-
+            //if(room == null)
+                //throw exception
             s.setRoom(room);
             Sojourn soj = sojournService.addSojourn(s);
             sojournsFound.add(soj);
@@ -62,14 +54,11 @@ public class BookingService implements IBookingService {
 
         //creo e salvo booking
         Booking b = bookingRepository.save(new Booking(sojournsFound,itemsFound));
-
-
         //creo e salvo payment
-        paymentService.addPayment(new Payment(450, b));       //TOTAL COST DA CALCOLARE
-
+        if(paid)
+            paymentService.addPayment(new Payment(450, b));       //TOTAL COST DA CALCOLARE
         //aggiorno guest
-        guestService.addBooking(guestId,b);    // gestire errore se guest non è in database (ritorna guest = null)
-
+        guestService.addBooking(guestId,b);
         return b;
     }
 
@@ -89,4 +78,13 @@ public class BookingService implements IBookingService {
     public void deleteAll() {
         bookingRepository.deleteAll();
     }
+
+    @Override
+    public Payment payBooking(Long bookingId){
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
+        //if(!booking.isPresent())
+            //throw exception
+        return paymentService.addPayment(new Payment(400,booking.get()));
+    }
+
 }

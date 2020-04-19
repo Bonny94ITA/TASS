@@ -47,9 +47,18 @@ public class BookingsController {
         ObjectMapper mapper = new ObjectMapper();
         //get from params
         Long guestId = mapper.convertValue(requestParams.get("guest"),Long.class);
+        boolean paid = mapper.convertValue(requestParams.get("paid"),Boolean.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"),Booking.class);
-        Booking b =  bookingService.addBook(booking,guestId);
+        Booking b =  bookingService.addBook(booking,guestId,paid);
         return b;
+    }
+
+
+    @PostMapping(value = "/booking/pay")
+    public Payment payBooking(@RequestBody Map<String,Object> requestParams) throws ParseException{
+        ObjectMapper mapper = new ObjectMapper();
+        Long bookingId = mapper.convertValue(requestParams.get("id"),Long.class);
+        return bookingService.payBooking(bookingId);
     }
 }
 /* json
@@ -98,14 +107,8 @@ GET - localhost:8080/prova
 	"days": 5,
 	"max-budget": 700.0,
 	"people": 3,
-	"only-regions":
-		[
-			"Sardegna", "Campania", "Sicilia"
-		],
-	"only-not-regions":
-		[
-			"Piemonte", "Lombardia"
-		],
+	"only-region": "Sardegna",
+	"only-not-region": "Lombardia",
 	"max-stars": 4,
 	"min-stars": 1,
 	"tourism-types":
