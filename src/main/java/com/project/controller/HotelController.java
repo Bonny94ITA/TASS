@@ -6,6 +6,7 @@ import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,7 +30,7 @@ public class HotelController {
     }
 
     @PostMapping(value ="/search")
-    public List<Room> findFreeRooms(@RequestBody Map<String,Object> requestParams){
+    public List<BigInteger> findFreeRooms(@RequestBody Map<String,Object> requestParams){
         ObjectMapper mapper = new ObjectMapper();
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         mapper.setDateFormat(df);

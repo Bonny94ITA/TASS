@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,8 +102,8 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public List<Room> findFreeRooms(Date arrival, Date departure, String city){
-        return sojournRepository.findAllRoom(arrival,departure,city);
+    public List<BigInteger> findFreeRooms(Date arrival, Date departure, String city){
+        return sojournRepository.findAllFreeRoomsIn(arrival,departure,city);
     }
 
     /* il soggiorno nuovo viene creato quando si paga una prenotazione e quindi blocca la stanza

@@ -16,11 +16,11 @@ public class Sojourn {
     private Long id;
 
     @Column(name = "arrival")
-    @JsonFormat(pattern="dd/MM/yyyy")
+    @JsonFormat(pattern="dd/MM/yyyy")  //start date
     private Date arrival;
 
     @Column(name = "departure")
-    @JsonFormat(pattern="dd/MM/yyyy")
+    @JsonFormat(pattern="dd/MM/yyyy")       //end date
     private Date departure;
 
     @OneToOne
