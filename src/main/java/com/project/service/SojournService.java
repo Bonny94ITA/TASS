@@ -1,10 +1,14 @@
 package com.project.service;
 
+import com.project.model.Room;
 import com.project.model.Sojourn;
 import com.project.repository.SojournRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional

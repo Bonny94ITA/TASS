@@ -1,13 +1,7 @@
 package com.project.service;
 
-import com.project.model.City;
-import com.project.model.Hotel;
-import com.project.model.Room;
-import com.project.model.TourismType;
-import com.project.repository.CityRepository;
-import com.project.repository.HotelRepository;
-import com.project.repository.RoomRepository;
-import com.project.repository.TourismTypesRepository;
+import com.project.model.*;
+import com.project.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +22,13 @@ public class HotelService implements IHotelService {
     TourismTypesRepository tourismTypesRepository;
     @Autowired
     CityRepository cityRepository;
+    @Autowired
+    private SojournRepository sojournRepository;
+
+    @Override
+    public List<Room> test() {
+        return sojournRepository.findAllFreeRoomsIn();
+    }
 
     @Override
     public List<Hotel> findAllHotels() {

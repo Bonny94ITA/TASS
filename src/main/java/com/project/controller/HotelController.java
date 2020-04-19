@@ -43,6 +43,9 @@ public class HotelController {
     @PostMapping(value = "/tourismType/new")
     public TourismType postAddTourismTypes(@RequestBody TourismType tt){ return hotelService.addTourismType(tt); }
 
+    @GetMapping("/test")
+    public List<Room> test(){ return hotelService.test(); }
+
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già
     // su tourismtype ( il contatore di spring non si aggiorna sulle modifiche del db?)
 

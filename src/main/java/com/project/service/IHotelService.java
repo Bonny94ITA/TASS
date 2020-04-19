@@ -1,9 +1,6 @@
 package com.project.service;
 
-import com.project.model.City;
-import com.project.model.Hotel;
-import com.project.model.Room;
-import com.project.model.TourismType;
+import com.project.model.*;
 
 import java.util.List;
 
@@ -25,4 +22,6 @@ public interface IHotelService  {
     List<TourismType> findAllTourismTypes();
 
     List<City> findAllCities();
+
+    List<Room> test();
 }
