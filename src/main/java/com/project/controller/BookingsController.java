@@ -31,9 +31,11 @@ public class BookingsController {
         Integer maxStars =(Integer)requestParams.get("max-stars");
         Integer minStars =(Integer)requestParams.get("min-stars");
         List<String> tourismTypes = (List<String>)requestParams.get("tourism-types");
+        Date arrival = (Date)requestParams.get("arrival");
+        Date departure = (Date)requestParams.get("departure");
 
         return secretSearch.getAllAlternatives(cities, days, maxBudget, numPeople, onlyRegion,
-                                               onlyNotRegion, maxStars, minStars, tourismTypes);
+                                               onlyNotRegion, maxStars, minStars, tourismTypes, arrival, departure);
     }
 
     @GetMapping("/booking")

@@ -37,7 +37,29 @@ public class SecretSearch implements ISecretSearch{
 
     @Override
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
-        List<Hotel> hotelList = hotelService.findAllHotels();
+        Date arrival = (Date)args[9]; //input
+        Date departure = (Date)args[10]; // input
+
+        List<Room> roomFreeList = hotelService.findFreeRooms(arrival,departure);
+        List<Hotel> hotelList = new ArrayList<>();
+        List<List<Room>> roomList = new ArrayList<>();
+        List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
+        List<City> citiesList = hotelService.findAllCities();
+
+        for(Room r: roomFreeList){
+            Hotel h = r.getHotel();
+            if(!hotelList.contains(h))
+                hotelList.add(h);
+            roomList.get(hotelList.indexOf(h)).add(r);
+        }
+        int max_room = 0;
+        for (List l : roomList){
+            if (max_room < l.size())
+                max_room = l.size();
+        }
+
+
+        /*List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
         List<List<Room>> roomList = new ArrayList<>();
@@ -49,9 +71,9 @@ public class SecretSearch implements ISecretSearch{
             roomList.add(rooms);
             if(max_room<rooms.size())
                 max_room=rooms.size();
-        }
+        }*/
 
-        double[][] pricePerNight = new double[max_room][hotelList.size()];
+        double[][] pricePerNight = new double[max_room][hotelList.size()]; //riga stanze, colonna hotel
         double[][] places = new double[max_room][hotelList.size()];
 
         for(int i=0;i<hotelList.size();i++){
