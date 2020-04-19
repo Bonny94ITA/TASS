@@ -6,9 +6,9 @@ import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +37,10 @@ public class HotelController {
         Date arrival = mapper.convertValue(requestParams.get("arrival"),Date.class);
         Date departure = mapper.convertValue(requestParams.get("departure"),Date.class);
         String city = mapper.convertValue(requestParams.get("city"),String.class);
-        List<Room> freeRooms = new ArrayList<>();
-        List<Hotel> allHotels = hotelService.findAllHotels();
-
-        for (Hotel h : allHotels) {
-            freeRooms.addAll(hotelService.findFreeRooms(arrival, departure, city, h.getId().intValue()));
-        }
-
-        return freeRooms;
+        if (city!=null)
+            return hotelService.findFreeRooms(arrival,departure,city);
+        else
+            return hotelService.findFreeRooms(arrival,departure);
     }
 
     @PostMapping(value = "/hotel/register")

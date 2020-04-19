@@ -4,9 +4,9 @@ import com.project.model.Alternative;
 import ilog.concert.IloException;
 import net.sf.clipsrules.jni.CLIPSException;
 
-import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 public interface ISecretSearch {
-    List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException, ParseException;
+    List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException;
 }

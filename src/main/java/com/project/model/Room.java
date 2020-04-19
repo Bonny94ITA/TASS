@@ -5,7 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "room")
 public class Room {
-
     //FIELDS
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +22,6 @@ public class Room {
 
     //CONSTRUCTORS
     public Room() {}
-
     public Room(int numPlaces, Hotel hotel, int pricePerNight) {
         this.numPlaces = numPlaces;
         this.hotel = hotel;

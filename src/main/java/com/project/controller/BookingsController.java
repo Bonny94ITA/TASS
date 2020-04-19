@@ -13,6 +13,7 @@ import java.util.*;
 @RestController
 public class BookingsController {
 //PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
+    //controllare che se lancia un'eccezione non deve salvare nulla in database (forse lo fa in automatico)
     @Autowired
     private IBookingService bookingService;
     @Autowired
