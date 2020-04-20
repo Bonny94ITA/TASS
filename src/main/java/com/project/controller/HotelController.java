@@ -13,12 +13,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HotelController {
     @Autowired
     IHotelService hotelService;
 
-    @CrossOrigin
+
     @GetMapping("/hotels")
     public List<Hotel> getAllHotels() {
         return hotelService.findAllHotels();
