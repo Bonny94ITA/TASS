@@ -18,7 +18,7 @@ public class HotelController {
     @Autowired
     IHotelService hotelService;
 
-
+    @CrossOrigin
     @GetMapping("/hotels")
     public List<Hotel> getAllHotels() {
         return hotelService.findAllHotels();
