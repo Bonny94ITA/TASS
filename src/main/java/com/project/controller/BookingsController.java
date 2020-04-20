@@ -21,8 +21,7 @@ public class BookingsController {
     private IBookingService bookingService;
     @Autowired
     private ISecretSearch secretSearch;
-
-
+    
     @GetMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {
