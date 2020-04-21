@@ -23,18 +23,18 @@ public class BookingsController {
     @Autowired
     private ISecretSearch secretSearch;
     
-    @GetMapping("/prova")
+    @PostMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {
         List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
         Integer days = (Integer)requestParams.get("days");
-        Double maxBudget = (Double)requestParams.get("max-budget");
+        Double maxBudget = (Double)requestParams.get("maxBudget");
         Integer numPeople = (Integer)requestParams.get("people");
-        String onlyRegion = (String)requestParams.get("only-region");
-        String onlyNotRegion = (String)requestParams.get("only-not-region");
-        Integer maxStars =(Integer)requestParams.get("max-stars");
-        Integer minStars =(Integer)requestParams.get("min-stars");
-        List<String> tourismTypes = (List<String>)requestParams.get("tourism-types");
+        String onlyRegion = (String)requestParams.get("onlyRegion");
+        String onlyNotRegion = (String)requestParams.get("onlyNotRegion");
+        Integer maxStars =(Integer)requestParams.get("maxStars");
+        Integer minStars =(Integer)requestParams.get("minStars");
+        List<String> tourismTypes = (List<String>)requestParams.get("tourismTypes");
         SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
