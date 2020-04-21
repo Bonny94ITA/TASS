@@ -26,9 +26,10 @@ public class BookingsController {
     @PostMapping("/prova")
     public List<Alternative> prova(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {
+        System.out.println(requestParams);
         List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
         Integer days = (Integer)requestParams.get("days");
-        Double maxBudget = (Double)requestParams.get("maxBudget");
+        Double maxBudget = (Double)Double.valueOf((String)requestParams.get("maxBudget"));
         Integer numPeople = (Integer)requestParams.get("people");
         String onlyRegion = (String)requestParams.get("onlyRegion");
         String onlyNotRegion = (String)requestParams.get("onlyNotRegion");
