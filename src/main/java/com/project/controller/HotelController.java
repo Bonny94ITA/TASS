@@ -19,7 +19,6 @@ public class HotelController {
     @Autowired
     IHotelService hotelService;
 
-
     @GetMapping("/hotels")
     public List<Hotel> getAllHotels() {
         return hotelService.findAllHotels();
@@ -111,9 +110,9 @@ ROOM
     CERCA STANZE LIBERE
     POST -localhost:8080/search
     {
-	"arrival":"20/05/2020",
-	"departure":"22/05/2020",
-	"city":"torino"
+	    "arrival":"20/05/2020",
+	    "departure":"22/05/2020",
+	    "city":"torino"
     }
 
  */

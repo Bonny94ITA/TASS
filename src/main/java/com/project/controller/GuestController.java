@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.project.model.Booking;
 import com.project.model.Guest;
@@ -39,11 +40,19 @@ public class GuestController {
     public List<Guest> getAllGuests() {
         return guestService.findAll();
     }
+
     @GetMapping("/guests/bookings")
-    public List<Booking> getMyBookings(Guest g){return guestService.getBookings(g.getId());}
+    public List<Booking> getMyBookings(Guest g){ return guestService.getBookings(g.getId());}
 
     @PostMapping(value = "/guests/register") // se fallisce a creare hashpsw ritorna null
     public Guest postRegisterGuest(@RequestBody Guest u){ return guestService.addGuest(u); }
+
+    @PostMapping(value = "/guests/login")
+    public Integer loginGuest(@RequestBody Map<String,Object> requestParams){
+        String email = (String)requestParams.get("email");
+        String pwd = (String)requestParams.get("pwd");
+        return guestService.login(email, pwd);
+    }
 
     @PostMapping(value = "/items/register")
     public Item postRegisterItem(@RequestBody Item i){ return itemService.addItem(i); }
@@ -74,6 +83,12 @@ GUEST
 		"name":"luca",
 		"pwd":"lululu",
 		"username":"luchinobellodemamma"
+    }
+
+    GET - localhost:8080/guests/login
+    {
+		"email":"aaa@aa.ac",
+		"pwd":"lululu"
     }
 
     DELETE - localhost:8080/guest/1     (1 è l'id da cancellare, non serve json per questo)

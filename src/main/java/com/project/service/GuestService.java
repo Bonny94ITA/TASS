@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -56,6 +57,16 @@ public class GuestService implements IGuestService {
     @Override
     public void deleteAll() {
         guestRepository.deleteAll();
+    }
+
+    @Override
+    public Integer login(String email, String pwd) {
+        Optional<Guest> guest = guestRepository.findByEmail(email);
+
+        if (guest.isPresent()) {
+            return (pwd.equals(guest.get().getPwd())) ? 0 : -1;
+        } else
+            return -2;
     }
 
     @Override

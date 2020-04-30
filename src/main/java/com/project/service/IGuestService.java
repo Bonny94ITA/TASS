@@ -4,6 +4,7 @@ import com.project.model.Booking;
 import com.project.model.Guest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IGuestService{
     List<Guest> findAll();
@@ -11,6 +12,8 @@ public interface IGuestService{
     Guest findById(Long id);
 
     Guest addGuest(Guest guest);
+
+    Integer login(String email, String pwd);
 
     void deleteById(long id);
 
