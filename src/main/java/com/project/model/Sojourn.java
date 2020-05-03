@@ -1,6 +1,7 @@
 package com.project.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "sojourn")
+@Check(constraints = "arrival <= departure")
 public class Sojourn {
 
     //FIELDS
@@ -16,7 +18,7 @@ public class Sojourn {
     private Long id;
 
     @Column(name = "arrival")
-    @JsonFormat(pattern="dd/MM/yyyy")  //start date
+    @JsonFormat(pattern="dd/MM/yyyy")       //start date
     private Date arrival;
 
     @Column(name = "departure")

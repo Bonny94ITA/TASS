@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.controller.DataException.InsertException;
 import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
@@ -12,14 +13,6 @@ public interface IHotelService  {
     List<Hotel> findAllHotels();
 
     Hotel findById(Long id);
-
-    Hotel addHotel(Hotel hotel);
-
-    City addCity(City city);
-
-    TourismType addTourismType(TourismType tt);
-
-    Room addRoom(Long h, Room r);
 
     List<Room> findRooms(long h);
 

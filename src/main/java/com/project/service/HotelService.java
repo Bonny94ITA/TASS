@@ -4,7 +4,10 @@ import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;
 import com.project.model.TourismType;
-import com.project.repository.*;
+import com.project.repository.CityRepository;
+import com.project.repository.HotelRepository;
+import com.project.repository.RoomRepository;
+import com.project.repository.TourismTypesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +29,6 @@ public class HotelService implements IHotelService {
     TourismTypesRepository tourismTypesRepository;
     @Autowired
     CityRepository cityRepository;
-    @Autowired
-    SojournRepository sojournRepository;
 
     @Override
     public List<Hotel> findAllHotels() {
@@ -40,43 +41,6 @@ public class HotelService implements IHotelService {
     public Hotel findById(Long id) {
         Optional<Hotel> hotel = hotelRepository.findById(id);
         return hotel.isPresent() ? hotel.get() : null;
-    }
-
-
-    @Override
-    public Hotel addHotel(Hotel hotel){
-        Optional<City> byId = cityRepository.findById(hotel.getCity().getId());
-        //if(!byId.isPresent())
-            //throw errore
-        return hotelRepository.save(new Hotel(hotel.getName(),hotel.getAddress(),byId.get(),
-                                        hotel.getCellNumber(),hotel.getStars()));
-    }
-
-    @Override
-    public City addCity(City city){
-        List<TourismType> tourismTypesList = new ArrayList<>();
-        for(TourismType t: city.getTourismTypes()){
-            Optional<TourismType> byId = tourismTypesRepository.findById(t.getId());
-            if(byId.isPresent())
-                tourismTypesList.add(byId.get());
-            //gestire quando passa un tourismtype non esistente in database
-        }
-        return cityRepository.save(new City(city.getCAP(), city.getName(), city.getRegion(),tourismTypesList));
-    }
-
-    @Override
-    public TourismType addTourismType(TourismType tt){
-        return tourismTypesRepository.save(new TourismType(tt.getType()));
-    }
-
-    @Override
-    public Room addRoom(Long hotelId, Room r){
-        Hotel hotel = findById(hotelId);
-        if(hotel == null) //gestire quando non trova
-            return null;
-        else
-            return roomRepository.save(new Room(r.getNumPlaces(),hotel,r.getPricePerNight()));
-
     }
 
     @Override

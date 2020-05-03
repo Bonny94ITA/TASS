@@ -1,7 +1,5 @@
 package com.project.model;
 
-import javafx.util.Pair;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;

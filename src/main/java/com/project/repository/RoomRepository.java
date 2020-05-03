@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends CrudRepository<Room, Long> {
     List<Room> findByHotel(Hotel h);
+
     @Query(value = "SELECT room.* " +
             "FROM sojourn, room, hotel, city " +
             "WHERE (:arrival <= sojourn.departure OR :departure >= sojourn.arrival) AND " +

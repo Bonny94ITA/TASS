@@ -1,10 +1,11 @@
 package com.project.service;
 
+import com.project.controller.DataException.DeleteException;
+import com.project.controller.DataException.InsertException;
 import com.project.model.Booking;
 import com.project.model.Guest;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IGuestService{
     List<Guest> findAll();
@@ -13,11 +14,7 @@ public interface IGuestService{
 
     Guest addGuest(Guest guest);
 
-    Integer login(String email, String pwd);
-
-    void deleteById(long id);
-
-    void deleteAll();
+    Object login(String email, String pwd);
 
     List<Booking> getBookings(Long id);
 

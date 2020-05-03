@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.controller.DataException.DeleteException;
+import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Booking;
 import com.project.model.Guest;
 import com.project.model.Item;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotNull;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class GuestController {
@@ -35,44 +40,51 @@ public class GuestController {
     @Autowired
     IItemService itemService;
 
+    @GetMapping("/guests/bookings/{id}")
+    public OutputData getMyBookings(@PathVariable @NotNull Long id) {
+        OutputData df = new OutputData();
+        List<Booking> bookings = guestService.getBookings(id);
 
-    @GetMapping("/guests")
-    public List<Guest> getAllGuests() {
-        return guestService.findAll();
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(bookings);
+
+        return df;
     }
 
-    @GetMapping("/guests/bookings")
-    public List<Booking> getMyBookings(Guest g){ return guestService.getBookings(g.getId());}
-
     @PostMapping(value = "/guests/register") // se fallisce a creare hashpsw ritorna null
-    public Guest postRegisterGuest(@RequestBody Guest u){ return guestService.addGuest(u); }
+    public OutputData postRegisterGuest(@RequestBody Guest u) {
+        OutputData df = new OutputData();
+        Guest guest = guestService.addGuest(u);
 
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(guest);
+
+        return df;
+    }
+
+    //Ogetto guest se tutto ok, -1 Password sbagliata, -2 utente inesistente
     @PostMapping(value = "/guests/login")
-    public Integer loginGuest(@RequestBody Map<String,Object> requestParams){
+    public OutputData postLoginGuest(@RequestBody Map<String,Object> requestParams){
+        OutputData df = new OutputData();
         String email = (String)requestParams.get("email");
         String pwd = (String)requestParams.get("pwd");
-        return guestService.login(email, pwd);
+        Object loginValue = guestService.login(email, pwd);
+
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(loginValue);
+
+        return df;
     }
 
     @PostMapping(value = "/items/register")
-    public Item postRegisterItem(@RequestBody Item i){ return itemService.addItem(i); }
+    public OutputData postRegisterItem(@RequestBody Item i) {
+        OutputData df = new OutputData();
+        Item item = itemService.addItem(i);
 
-    @DeleteMapping("/guests/{id}")
-    public ResponseEntity<String> deleteCustomer(@PathVariable("id") long id) {
-        System.out.println("Delete Customer with ID = " + id + "...");
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(item);
 
-        guestService.deleteById(id);
-
-        return new ResponseEntity<>("Customer has been deleted!", HttpStatus.OK);
-    }
-
-    @DeleteMapping("/guests/delete")
-    public ResponseEntity<String> deleteAllCustomers() {
-        System.out.println("Delete All Customers...");
-
-        guestService.deleteAll();
-
-        return new ResponseEntity<>("All customers have been deleted!", HttpStatus.OK);
+        return df;
     }
 }
 /*  JSON
@@ -90,8 +102,6 @@ GUEST
 		"email":"aaa@aa.ac",
 		"pwd":"lululu"
     }
-
-    DELETE - localhost:8080/guest/1     (1 è l'id da cancellare, non serve json per questo)
 
 ITEM
     POST- localhost:8080/items/register

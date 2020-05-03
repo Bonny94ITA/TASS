@@ -1,13 +1,14 @@
 package com.project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.controller.DataFormatter.OutputData;
 import com.project.model.*;
 import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -20,48 +21,45 @@ public class HotelController {
     IHotelService hotelService;
 
     @GetMapping("/hotels")
-    public List<Hotel> getAllHotels() {
-        return hotelService.findAllHotels();
+    public OutputData getAllHotels() {
+        OutputData df = new OutputData();
+        List<Hotel> allHotels = hotelService.findAllHotels();
+
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(allHotels);
+
+        return df;
     }
 
     @GetMapping("/hotel/rooms/{id}")
-    public List<Room> getHotelRooms(@PathVariable("id") long hotelId) {
-        return hotelService.findRooms(hotelId);
+    public OutputData getHotelRooms(@PathVariable("id") long hotelId) {
+        OutputData df = new OutputData();
+        List<Room> rooms = hotelService.findRooms(hotelId);
+
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(rooms);
+
+        return df;
     }
 
-    @PostMapping(value ="/search")
-    public List<Room> findFreeRooms(@RequestBody Map<String,Object> requestParams){
+    @PostMapping(value ="/freeRooms")
+    public OutputData postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
+        OutputData df = new OutputData();
         ObjectMapper mapper = new ObjectMapper();
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        mapper.setDateFormat(df);
-        Date arrival = mapper.convertValue(requestParams.get("arrival"),Date.class);
-        Date departure = mapper.convertValue(requestParams.get("departure"),Date.class);
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        Date arrival = sf.parse((String)requestParams.get("arrival"));
+        Date departure = sf.parse((String)requestParams.get("departure"));
         String city = mapper.convertValue(requestParams.get("city"),String.class);
-        if (city!=null)
-            return hotelService.findFreeRooms(arrival,departure,city);
-        else
-            return hotelService.findFreeRooms(arrival,departure);
+
+        List<Room> freeRooms = (city!=null) ? freeRooms =
+                hotelService.findFreeRooms(arrival, departure, city) :
+                hotelService.findFreeRooms(arrival, departure) ;
+
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(freeRooms);
+
+        return df;
     }
-
-    @PostMapping(value = "/hotel/register")
-    public Hotel postAddHotel(@RequestBody Hotel h){ return hotelService.addHotel(h); }
-
-    @PostMapping(value = "/hotel/rooms/new")
-    public Room postAddRoom(@RequestBody Map<String,Object> requestParams){
-        ObjectMapper mapper = new ObjectMapper();
-        Long hotelId = mapper.convertValue(requestParams.get("hotel"),Long.class);
-        //Long hotelId = mapper.convertValue(requestParams.get("hotel"),Long.class).getId();
-        Room room = mapper.convertValue(requestParams.get("room"),Room.class);
-        return hotelService.addRoom(hotelId,room);
-    }
-
-    @PostMapping(value = "/city/new")
-    public City postAddCity(@RequestBody City city){ return hotelService.addCity(city); }
-
-    @PostMapping(value = "/tourismType/new")
-    public TourismType postAddTourismTypes(@RequestBody TourismType tt){ return hotelService.addTourismType(tt); }
-
-
 
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già
     // su tourismtype ( il contatore di spring non si aggiorna sulle modifiche del db?)
@@ -108,7 +106,7 @@ ROOM
     }
 
     CERCA STANZE LIBERE
-    POST -localhost:8080/search
+    GET - localhost:8080/search
     {
 	    "arrival":"20/05/2020",
 	    "departure":"22/05/2020",

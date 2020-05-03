@@ -12,7 +12,6 @@ import java.util.*;
 
 @Service
 public class SecretSearch implements ISecretSearch{
-    private static final ISecretSearch INSTANCE = new SecretSearch();
     private Environment clips;
     private IloCplex cplex;
     private static final short NUMBER_OF_SOLUTIONS_PROPOSED = 3;
@@ -59,24 +58,10 @@ public class SecretSearch implements ISecretSearch{
             hotelRooms.replace(h.getId(), rooms);
         }
 
-        for (List l : hotelRooms.values()){
+        for (List<Room> l : hotelRooms.values()){
             if (max_room < l.size())
                 max_room = l.size();
         }
-
-        /*List<Hotel> hotelList = hotelService.findAllHotels();
-        List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
-        List<City> citiesList = hotelService.findAllCities();
-        List<List<Room>> roomList = new ArrayList<>();
-        int max_room = 0;
-
-        for(int i=0;i<hotelList.size();i++){
-            Long hotel_id = hotelList.get(i).getId();
-            List<Room> rooms = hotelService.findRooms(hotel_id);
-            roomList.add(rooms);
-            if(max_room<rooms.size())
-                max_room=rooms.size();
-        }*/
 
         double[][] pricePerNight = new double[max_room][hotelList.size()]; //riga stanze, colonna hotel
         double[][] places = new double[max_room][hotelList.size()];

@@ -1,14 +1,12 @@
 package com.project.service;
 
-import com.project.model.Room;
+import com.project.controller.DataException.DeleteException;
+import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Sojourn;
 import com.project.repository.SojournRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -20,5 +18,18 @@ public class SojournService implements ISojournService {
     @Override
     public Sojourn addSojourn(Sojourn sojourn) {
         return sojournRepository.save(new Sojourn(sojourn.getArrival(),sojourn.getDeparture(),sojourn.getRoom()));
+    }
+
+    @Override
+    public void deleteById(long id) throws DeleteException {
+        if (sojournRepository.findById(id).isPresent()) {
+            sojournRepository.deleteById(id);
+        } else throw new DeleteException(OutputData.ResultCode.DELETE_ERROR, "Sojourn with id. " +
+                id + " not found.");
+    }
+
+    @Override
+    public void deleteAll() {
+        sojournRepository.deleteAll();
     }
 }

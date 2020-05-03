@@ -1,13 +1,10 @@
 package com.project.repository;
 
-
-import com.project.model.Booking;
+import com.project.model.SojournItem;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface BookingRepository extends CrudRepository<Booking, Long> {
-}
+public interface SojournItemRepository extends CrudRepository<SojournItem, Long> {
 
+}

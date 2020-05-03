@@ -12,5 +12,5 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface SojournRepository  extends JpaRepository<Sojourn, Long> {
+public interface SojournRepository  extends CrudRepository<Sojourn, Long> {
 }

@@ -13,6 +13,7 @@ public class Item {
 
     @Column
     private String name;
+
     //CONSTRUCTORS
     public Item() {}
     public Item(String name){this.name=name;}

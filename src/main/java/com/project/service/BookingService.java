@@ -1,7 +1,12 @@
 package com.project.service;
 
+import com.project.controller.DataException.DeleteException;
+import com.project.controller.DataException.InsertException;
+import com.project.controller.DataException.UpdateException;
+import com.project.controller.DataFormatter.OutputData;
 import com.project.model.*;
 import com.project.repository.BookingRepository;
+import org.hibernate.result.Output;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,47 +24,33 @@ public class BookingService implements IBookingService {
     @Autowired
     private GuestService guestService;
     @Autowired
-    private ItemService itemService;
+    private RoomService roomService;
     @Autowired
     private SojournService sojournService;
     @Autowired
-    private RoomService roomService;
-    @Autowired
     private PaymentService paymentService;
 
-
     @Override
-    public Booking addBook(Booking booking, Long guestId, boolean paid){
-        //cerco items
-        List<Item> itemsFound = new ArrayList();
-        for (Item i : booking.getRentedItems()) {
-            Long itemId = i.getId();
-            Item item = itemService.findById(itemId);
-            //if(item == null)
-                //throw exception
-            itemsFound.add(item);
-        }
-
-        //create e salvo sojourn
+    public Booking addBook(Booking booking, Long guestId) throws InsertException {
+        Booking b;
+        Guest g = guestService.findById(guestId);
         List<Sojourn> sojournsFound = new ArrayList<>();
         for(Sojourn s : booking.getSojourns()){
-            //cerco room
             Room room = roomService.findById(s.getRoom().getId());
-            //if(room == null)
-                //throw exception
+            if(room == null)
+                throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Room with id. " +
+                        s.getRoom().getId() + " not found.");
             s.setRoom(room);
             Sojourn soj = sojournService.addSojourn(s);
             sojournsFound.add(soj);
         }
 
-        //creo e salvo booking
-        Booking b = bookingRepository.save(new Booking(sojournsFound,itemsFound));
-        //creo e salvo payment
-        if(paid)
-            paymentService.addPayment(new Payment(450, b));       //TOTAL COST DA CALCOLARE
-        //aggiorno guest
-        guestService.addBooking(guestId,b);
-        return b;
+        if (g != null) {
+            b = bookingRepository.save(new Booking(sojournsFound));
+            guestService.addBooking(guestId,b);
+            return b;
+        } else throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Guest with id. " +
+                guestId + " not found.");
     }
 
     @Override
@@ -70,8 +61,11 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public void deleteById(long id) {
-        bookingRepository.deleteById(id);
+    public void deleteById(long id) throws DeleteException {
+        if (bookingRepository.findById(id).isPresent())
+            bookingRepository.deleteById(id);
+        else throw new DeleteException(OutputData.ResultCode.DELETE_ERROR, "Booking with id. " +
+                id + " not found.");
     }
 
     @Override
@@ -80,11 +74,19 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public Payment payBooking(Long bookingId){
-        Optional<Booking> booking = bookingRepository.findById(bookingId);
-        //if(!booking.isPresent())
-            //throw exception
-        return paymentService.addPayment(new Payment(400,booking.get()));
+    public Booking findById(Long id) {
+        Optional<Booking> b = bookingRepository.findById(id);
+        return b.isPresent() ? b.get() : null;
     }
 
+    @Override
+    public Payment payBooking(Long bookingId, Double totalPayment) throws InsertException {
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
+
+        //cointrolo se le stanze del booking sono ancora libere
+        if(!booking.isPresent())
+            throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Booking with id. " +
+                    bookingId + " not present.");
+        return paymentService.addPayment(new Payment(totalPayment,booking.get()));
+    }
 }

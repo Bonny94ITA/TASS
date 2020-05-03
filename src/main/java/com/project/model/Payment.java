@@ -12,14 +12,14 @@ public class Payment {
     private long id;
 
     @Column(name = "totalCost")
-    private long totalCost;
+    private double totalCost;
 
     @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="booking")
     private Booking booking;
 
     public Payment() {}
-    public Payment(long totalCost, Booking booking) {
+    public Payment(double totalCost, Booking booking) {
         this.booking = booking;
         this.totalCost = totalCost;
     }
@@ -29,7 +29,7 @@ public class Payment {
     public long getId() {
         return id;
     }
-    public long getTotalCost() {
+    public double getTotalCost() {
         return totalCost;
     }
     public Booking getBooking() { return booking; }
