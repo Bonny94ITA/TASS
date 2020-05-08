@@ -42,6 +42,18 @@ public class HotelController {
         return df;
     }
 
+    @GetMapping("/cities")
+    public OutputData getCities(){
+        OutputData df = new OutputData();
+        List<City> cities = hotelService.findAllCities();
+
+        df.setResultCode(OutputData.ResultCode.RESULT_OK);
+        df.setReturnedValue(cities);
+
+        return df;
+    }
+
+
     @PostMapping(value ="/freeRooms")
     public OutputData postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
         OutputData df = new OutputData();
