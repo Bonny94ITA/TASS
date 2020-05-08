@@ -328,7 +328,7 @@
   (attribute (name tourism-type) (value unknown) (certainty 0.0))
   (attribute (name region) (value unknown) (certainty 0.0))
   (attribute (name min-stars) (value 1) (certainty 0.0))
-  (attribute (name max-stars) (value 4) (certainty 0.0)))
+  (attribute (name max-stars) (value 5) (certainty 0.0)))
 
 ;;genera gli hotel attribute
 (defrule HOTELS::generate-hotels

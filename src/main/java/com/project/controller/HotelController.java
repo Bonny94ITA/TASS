@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 public class HotelController {
     @Autowired
@@ -47,6 +47,8 @@ public class HotelController {
         OutputData df = new OutputData();
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        Integer people = mapper.convertValue(requestParams.get("personNumber"),Integer.class);
+        //modificare
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
         String city = mapper.convertValue(requestParams.get("city"),String.class);

@@ -93,8 +93,8 @@ public class SecretSearch implements ISecretSearch{
         int people = (Integer)args[3];
         String onlyRegion = (String)args[4];
         String onlyNotRegion = (String)args[5];
-        int maxStars = (Integer)args[6];
-        int minStars = (Integer)args[7];
+        int maxStars = (args[6] == null) ? 5 : (Integer)args[6];
+        int minStars = (args[7] == null) ? 1 : (Integer)args[7];
         Random rand = new Random();
 
         clips.reset();
@@ -176,7 +176,7 @@ public class SecretSearch implements ISecretSearch{
             certainties.add(((NumberValue) fv.getSlotValue("certainty")).doubleValue());
             coefficients[k++] = rand.nextDouble();
         }
-
+        
         if (hotelsName.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
                 Pair<Alternative, Double> p = getSolution(hotelsName, certainties, places, pricePerNight,

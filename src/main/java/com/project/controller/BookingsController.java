@@ -21,8 +21,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 public class BookingsController {
 //PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
@@ -34,24 +35,27 @@ public class BookingsController {
     @Autowired
     private ISecretSearch secretSearch;
     
-    @GetMapping("/secretSearch")
+    @PostMapping("/secretSearch")
     public OutputData getSecretSearch(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {
         OutputData df = new OutputData();
-        List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
-        Integer days = (Integer)requestParams.get("days");
-        Double maxBudget = (Double)Double.valueOf((String)requestParams.get("maxBudget"));
-        Integer numPeople = (Integer)requestParams.get("people");
-        String onlyRegion = (String)requestParams.get("onlyRegion");
-        String onlyNotRegion = (String)requestParams.get("onlyNotRegion");
-        Integer maxStars =(Integer)requestParams.get("maxStars");
-        Integer minStars =(Integer)requestParams.get("minStars");
-        List<String> tourismTypes = (List<String>)requestParams.get("tourismTypes");
+        ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
+
+        List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
+        Double maxBudget = mapper.convertValue(requestParams.get("maxBudget"), Double.class);
+        Integer numPeople = mapper.convertValue(requestParams.get("people"), Integer.class);
+        String onlyRegion = mapper.convertValue(requestParams.get("onlyRegion"), String.class);
+        String onlyNotRegion = mapper.convertValue(requestParams.get("onlyNotRegion"), String.class);
+        Integer maxStars = mapper.convertValue(requestParams.get("maxStars"), Integer.class);
+        Integer minStars = mapper.convertValue(requestParams.get("minStars"), Integer.class);
+        List<String> tourismTypes = (List<String>)requestParams.get("tourismTypes");
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
 
-        List<Alternative> allAlternatives = secretSearch.getAllAlternatives(cities, days, maxBudget, numPeople, onlyRegion,
+        List<Alternative> allAlternatives = secretSearch.getAllAlternatives(cities,
+                (int) TimeUnit.DAYS.convert(departure.getTime() - arrival.getTime(), TimeUnit.MILLISECONDS),
+                maxBudget, numPeople, onlyRegion,
                 onlyNotRegion, maxStars, minStars, tourismTypes, arrival, departure);
 
         df.setResultCode(OutputData.ResultCode.RESULT_OK);
@@ -175,7 +179,7 @@ GET - localhost:8080/prova
 			}
 		],
 	"days": 5,
-	"maxBudget": "700.0",
+	"maxBudget": 700.0,
 	"people": 3,
 	"onlyRegion": "Sardegna",
 	"onlyNotRegion": "Lombardia",
