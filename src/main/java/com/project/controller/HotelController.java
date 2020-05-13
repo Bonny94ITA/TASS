@@ -52,8 +52,7 @@ public class HotelController {
 
         return df;
     }
-
-
+    
     @PostMapping(value ="/freeRooms")
     public OutputData postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
         OutputData df = new OutputData();

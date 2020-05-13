@@ -59,7 +59,7 @@
    (slot tt (type SYMBOL)))
 
 (deffunction MAIN::get-hotel-attribute-list ()
-  (bind ?facts (find-all-facts ((?f hotel-attribute)) (> ?f:certainty 0.0))))
+  (bind ?facts (find-all-facts ((?f hotel-attribute)) (>= ?f:certainty 0.0))))
 
 (defrule MAIN::start
   (declare (salience 10000))

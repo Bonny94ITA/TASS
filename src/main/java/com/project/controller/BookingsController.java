@@ -42,6 +42,8 @@ public class BookingsController {
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
 
+        System.out.println(requestParams);
+
         List<LinkedHashMap<String, String>> cities = (List<LinkedHashMap<String, String>>)requestParams.get("cities");
         Double maxBudget = mapper.convertValue(requestParams.get("maxBudget"), Double.class);
         Integer numPeople = mapper.convertValue(requestParams.get("people"), Integer.class);
