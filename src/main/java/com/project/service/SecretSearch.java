@@ -65,6 +65,7 @@ public class SecretSearch implements ISecretSearch{
         }
 
         /* Da controllare */
+        /*vecchio
         double[][] pricePerNight = new double[max_room][hotelList.size()]; //riga stanze, colonna hotel
         double[][] places = new double[max_room][hotelList.size()];
 
@@ -84,11 +85,34 @@ public class SecretSearch implements ISecretSearch{
                         places[j][i] = r.getNumPlaces();
                     }
                 }
+        }*/
+        /* nuovo*/
+        double[][] pricePerNight = new double[hotelList.size()][max_room]; //riga hotel, colonna stanza
+        double[][] places = new double[hotelList.size()][max_room];
+
+        for(int i=0;i<hotelList.size();i++){
+            Hotel h = hotelList.get(i);
+            List<Room> rooms = hotelRooms.get(h.getId());
+
+            if (rooms == null) { rooms = new ArrayList<>(); }
+
+            for(int j=0;j<max_room;j++) {
+                // se non ci sono più stanze per l'hotel i la colonna j dell'hotel i ha max value
+                if(j>=rooms.size()){
+                    pricePerNight[i][j] = Double.MAX_VALUE;
+                    places[i][j] = 0;
+                // altrimenti la stanza j(col) dell'hotel i(riga) vale...
+                }else{
+                    Room r = rooms.get(j);
+                    pricePerNight[i][j] = r.getPricePerNight();
+                    places[i][j] = r.getNumPlaces();
+                }
+            }
         }
 
         for(int i=0;i<hotelList.size();i++){
             for(int j=0;j<max_room;j++) {
-                System.out.println("PPN: " + pricePerNight[j][i]);
+                System.out.println("PPN: " + pricePerNight[i][j]);
                 System.out.println("Places: " + places[i][j]);
             }
 
