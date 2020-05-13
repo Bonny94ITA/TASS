@@ -12,7 +12,9 @@ import java.util.List;
 public interface IHotelService  {
     List<Hotel> findAllHotels();
 
-    Hotel findById(Long id);
+    Hotel findHotelById(Long id);
+
+    Room findRoomById(Long id);
 
     List<Room> findRooms(long h);
 
