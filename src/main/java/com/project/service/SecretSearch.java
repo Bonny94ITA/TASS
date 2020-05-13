@@ -19,6 +19,7 @@ public class SecretSearch implements ISecretSearch{
     @Autowired
     IHotelService hotelService;
 
+
     @Autowired
     public SecretSearch () {
         clips = new Environment();
@@ -264,8 +265,9 @@ public class SecretSearch implements ISecretSearch{
                 for (int i = 0; i < maxNumberOfRooms; ++i) {
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
-                        hm.put("HotelName", hotels.get(j));
-                        hm.put("RoomId", (i + 1));
+                        // hm.put("HotelName", hotels.get(j));
+                        // hm.put("RoomId", (i + 1));
+                        hm.put("Room", hotelService.findRoomById(Long.valueOf(i + 1)));
                         hm.put("DaysInRoom", cplex.getValue(y[i][j]));
                         hotelsRooms.add(hm);
                     }

@@ -8,6 +8,7 @@ import com.project.repository.CityRepository;
 import com.project.repository.HotelRepository;
 import com.project.repository.RoomRepository;
 import com.project.repository.TourismTypesRepository;
+import jdk.nashorn.internal.runtime.regexp.joni.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +39,15 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public Hotel findById(Long id) {
+    public Hotel findHotelById(Long id) {
         Optional<Hotel> hotel = hotelRepository.findById(id);
         return hotel.isPresent() ? hotel.get() : null;
+    }
+
+    @Override
+    public Room findRoomById(Long id) {
+        Optional<Room> room = roomRepository.findById(id);
+        return room.isPresent() ? room.get() : null;
     }
 
     @Override
