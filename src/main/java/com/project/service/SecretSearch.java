@@ -64,6 +64,7 @@ public class SecretSearch implements ISecretSearch{
                 max_room = l.size();
         }
 
+        /* Da controllare */
         double[][] pricePerNight = new double[max_room][hotelList.size()]; //riga stanze, colonna hotel
         double[][] places = new double[max_room][hotelList.size()];
 
@@ -83,6 +84,15 @@ public class SecretSearch implements ISecretSearch{
                         places[j][i] = r.getNumPlaces();
                     }
                 }
+        }
+
+        for(int i=0;i<hotelList.size();i++){
+            for(int j=0;j<max_room;j++) {
+                System.out.println("PPN: " + pricePerNight[j][i]);
+                System.out.println("Places: " + places[i][j]);
+            }
+
+            System.out.println();
         }
 
         List<Alternative> alternatives = new LinkedList<>();
@@ -177,6 +187,8 @@ public class SecretSearch implements ISecretSearch{
             certainties.add(((NumberValue) fv.getSlotValue("certainty")).doubleValue());
             coefficients[k++] = rand.nextDouble();
         }
+
+        System.out.println(hotelsName);
         
         if (hotelsName.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
@@ -254,8 +266,10 @@ public class SecretSearch implements ISecretSearch{
         constraints.add((IloRange)cplex.addEq(cplex.sum(intExprs), z));
         constraints.add(cplex.addLe(linearIntExpr, days));
         constraints.add(cplex.addLe(linearNumExpr2, budget));
-        constraints.add(cplex.addEq(linearNumExpr4, numPeople));
+        constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
+
+        System.out.println(cplex);
 
         if (cplex.solve()) {
             int realDays = 0;

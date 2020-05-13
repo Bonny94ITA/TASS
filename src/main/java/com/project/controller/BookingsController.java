@@ -55,6 +55,8 @@ public class BookingsController {
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
 
+        System.out.println((int) TimeUnit.DAYS.convert(departure.getTime() - arrival.getTime(), TimeUnit.MILLISECONDS));
+
         List<Alternative> allAlternatives = secretSearch.getAllAlternatives(cities,
                 (int) TimeUnit.DAYS.convert(departure.getTime() - arrival.getTime(), TimeUnit.MILLISECONDS),
                 maxBudget, numPeople, onlyRegion,
