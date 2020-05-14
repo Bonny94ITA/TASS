@@ -54,7 +54,7 @@ public class BookingsController {
         List<String> tourismTypes = (List<String>)requestParams.get("tourismTypes");
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
-        
+
         List<Alternative> allAlternatives = secretSearch.getAllAlternatives(cities,
                 (int) TimeUnit.DAYS.convert(departure.getTime() - arrival.getTime(), TimeUnit.MILLISECONDS),
                 maxBudget, numPeople, onlyRegion,

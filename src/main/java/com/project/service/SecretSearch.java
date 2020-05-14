@@ -47,8 +47,8 @@ public class SecretSearch implements ISecretSearch{
         List<Double> certainties = new LinkedList<>();
         List<Double> solutionToDiscard = new LinkedList<>();
         Random rand = new Random();
-        Map<Long, List<Room>> hotelRooms = makeHotelsRoomsHashMap(roomFreeList);
-        int max_room = getMaxNumberOfRooms (hotelRooms);
+        Map<Long, List<Room>> hotelsRooms = makeHotelsRoomsHashMap(roomFreeList);
+        int max_room = getMaxNumberOfRooms (hotelsRooms);
         int days = (Integer)args[1];
         double budget = (Double)args[2];
         int people = (Integer)args[3];
@@ -83,7 +83,7 @@ public class SecretSearch implements ISecretSearch{
         /* Fill PricePerNight and Place's matricies */
         for (int i = 0; i < favoriteHotels.size(); i++){
             Hotel h = favoriteHotels.get(i);
-            List<Room> rooms = hotelRooms.get(h.getId());
+            List<Room> rooms = hotelsRooms.get(h.getId());
 
             if (rooms == null) { rooms = new ArrayList<>(); }
 
@@ -102,8 +102,8 @@ public class SecretSearch implements ISecretSearch{
         /* Gettin solutions */
         if (favoriteHotels.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
-                Pair<Alternative, Double> p = getSolution(hotelsName, certainties, places, pricePerNight,
-                        days, budget, coefficients, solutionToDiscard, max_room, people);
+                Pair<Alternative, Double> p = getSolution(favoriteHotels, hotelsRooms, certainties,
+                        places, pricePerNight, days, budget, coefficients, solutionToDiscard, max_room, people);
 
                 if (p != null) {
                     solutionToDiscard.add(p.getValue());
@@ -115,7 +115,8 @@ public class SecretSearch implements ISecretSearch{
         return alternatives;
     }
 
-    private Pair<Alternative, Double> getSolution(List<String> hotels, List<Double> certainties, double places[][],
+    private Pair<Alternative, Double> getSolution(List<Hotel> hotels, Map<Long, List<Room>> hotelsRooms,
+                                                  List<Double> certainties, double places[][],
                                                   double pricePerNight[][], int days, double budget,
                                                   double coefficients[], List<Double> solToDiscard,
                                                   int maxNumberOfRooms, int numPeople)
@@ -131,7 +132,7 @@ public class SecretSearch implements ISecretSearch{
         IloLinearNumExpr objective = cplex.linearNumExpr();
         List<IloRange> constraints = new ArrayList<>();
         IloIntExpr[] intExprs = new IloIntExpr[hotels.size()];
-        List<HashMap<String, Object>> hotelsRooms = new LinkedList<>();
+        List<HashMap<String, Object>> hotelRooms = new LinkedList<>();
         double newScalarProduct = 0.0;
         double yMax = days;
         double yMin = 0.1;
@@ -179,6 +180,8 @@ public class SecretSearch implements ISecretSearch{
         constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
 
+        System.out.println(cplex);
+
         if (cplex.solve()) {
             int realDays = 0;
             for (int j = 0; j  < hotels.size(); ++j) {
@@ -186,9 +189,10 @@ public class SecretSearch implements ISecretSearch{
                 for (int i = 0; i < maxNumberOfRooms; ++i) {
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
-                        hm.put("Room", hotelService.findRoomById(Long.valueOf(i + 1)));
+                        hm.put("Room", hotelsRooms.get(hotels.get(j).getId()).get(i));
                         hm.put("DaysInRoom", cplex.getValue(y[i][j]));
-                        hotelsRooms.add(hm);
+                        System.out.println("y" + i + j + " :" + cplex.getValue(y[i][j]));
+                        hotelRooms.add(hm);
                     }
                 }
             }
@@ -197,7 +201,7 @@ public class SecretSearch implements ISecretSearch{
                 newScalarProduct += (cplex.getValue(x[i]) * coefficients[i]);
             }
 
-            Alternative alt = new Alternative (hotelsRooms, realDays);
+            Alternative alt = new Alternative (hotelRooms, realDays);
             return new Pair<>(alt, newScalarProduct);
         } else {
             System.out.println("Model not solved");
