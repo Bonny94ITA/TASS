@@ -37,168 +37,30 @@ public class SecretSearch implements ISecretSearch{
 
     @Override
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
-        Date arrival = (Date)args[9]; //input
-        Date departure = (Date)args[10]; // input
-
-        List<Room> roomFreeList = hotelService.findFreeRooms(arrival,departure);
+        List<Room> roomFreeList = hotelService.findFreeRooms((Date)args[9], (Date)args[10]);
         List<Hotel> hotelList = hotelService.findAllHotels();
-        Map<Long, List<Room>> hotelRooms = new HashMap<>();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
-        int max_room = 0;
-
-        for(Room r: roomFreeList){
-            Hotel h = r.getHotel();
-
-            if (!hotelRooms.containsKey(h.getId())) {
-                hotelRooms.put(h.getId(), new ArrayList<>());
-            }
-
-            List<Room> rooms = hotelRooms.get(h.getId());
-            rooms.add(r);
-            hotelRooms.replace(h.getId(), rooms);
-        }
-
-        for (List<Room> l : hotelRooms.values()){
-            if (max_room < l.size())
-                max_room = l.size();
-        }
-
-        /* Da controllare */
-        /*vecchio
-        double[][] pricePerNight = new double[max_room][hotelList.size()]; //riga stanze, colonna hotel
-        double[][] places = new double[max_room][hotelList.size()];
-
-        for(int i=0;i<hotelList.size();i++){
-            Hotel h = hotelList.get(i);
-            List<Room> rooms = hotelRooms.get(h.getId());
-
-            if (rooms == null) { rooms = new ArrayList<>(); }
-
-                for(int j=0;j<max_room;j++) {
-                    if(j>=rooms.size()){
-                        pricePerNight[j][i] = Double.MAX_VALUE;
-                        places[j][i] = 0;
-                    }else{
-                        Room r = rooms.get(j);
-                        pricePerNight[j][i] = r.getPricePerNight();
-                        places[j][i] = r.getNumPlaces();
-                    }
-                }
-        }*/
-        /* nuovo*/
-        double[][] pricePerNight = new double[hotelList.size()][max_room]; //riga hotel, colonna stanza
-        double[][] places = new double[hotelList.size()][max_room];
-
-        for(int i=0;i<hotelList.size();i++){
-            Hotel h = hotelList.get(i);
-            List<Room> rooms = hotelRooms.get(h.getId());
-
-            if (rooms == null) { rooms = new ArrayList<>(); }
-
-            for(int j=0;j<max_room;j++) {
-                // se non ci sono più stanze per l'hotel i la colonna j dell'hotel i ha max value
-                if(j>=rooms.size()){
-                    pricePerNight[i][j] = Double.MAX_VALUE;
-                    places[i][j] = 0;
-                // altrimenti la stanza j(col) dell'hotel i(riga) vale...
-                }else{
-                    Room r = rooms.get(j);
-                    pricePerNight[i][j] = r.getPricePerNight();
-                    places[i][j] = r.getNumPlaces();
-                }
-            }
-        }
-
-        for(int i=0;i<hotelList.size();i++){
-            for(int j=0;j<max_room;j++) {
-                System.out.println("PPN: " + pricePerNight[i][j]);
-                System.out.println("Places: " + places[i][j]);
-            }
-
-            System.out.println();
-        }
-
+        List<Hotel> favoriteHotels = new ArrayList<>();
         List<Alternative> alternatives = new LinkedList<>();
         List<String> hotelsName = new LinkedList<>();
         List<Double> certainties = new LinkedList<>();
         List<Double> solutionToDiscard = new LinkedList<>();
+        Random rand = new Random();
+        Map<Long, List<Room>> hotelRooms = makeHotelsRoomsHashMap(roomFreeList);
+        int max_room = getMaxNumberOfRooms (hotelRooms);
         int days = (Integer)args[1];
         double budget = (Double)args[2];
         int people = (Integer)args[3];
-        String onlyRegion = (String)args[4];
-        String onlyNotRegion = (String)args[5];
-        int maxStars = (args[6] == null) ? 5 : (Integer)args[6];
-        int minStars = (args[7] == null) ? 1 : (Integer)args[7];
-        Random rand = new Random();
+
+        double[][] pricePerNight = new double[max_room][hotelList.size()];
+        double[][] places = new double[max_room][hotelList.size()];
 
         clips.reset();
-
-        for (Object obj : (ArrayList<Object>)args[0]) {
-            LinkedHashMap<String, Object> hm = (LinkedHashMap<String, Object>)obj;
-
-            clips.assertString("(attribute (name city) " +
-                                         "(value " + hm.get("region") + "-" +  hm.get("city") + ") " +
-                                         "(certainty 100.0))");
-
-            clips.assertString("(attribute (name region) " +
-                                         "(value " + hm.get("region") + ") " +
-                                         "(certainty 100.0))");
-        }
-
-        clips.assertString("(attribute (name only-region) " +
-                                     "(value " + onlyRegion + ") " +
-                                     "(certainty 100.0))");
-
-        clips.assertString("(attribute (name region) " +
-                                     "(value " + onlyRegion + ") " +
-                                     "(certainty 100.0))");
-
-        clips.assertString("(attribute (name only-not-region) " +
-                                     "(value " + onlyNotRegion + ") " +
-                                     "(certainty 100.0))");
-
-        clips.assertString("(attribute (name not-region) " +
-                                     "(value " + onlyNotRegion + ") " +
-                                     "(certainty 100.0))");
-
-        clips.assertString("(attribute (name max-stars) " +
-                                     "(value " + maxStars + ") " +
-                                     "(certainty 100.0))");
-
-        clips.assertString("(attribute (name min-stars) " +
-                                     "(value " + minStars + ") " +
-                                     "(certainty 100.0))");
-
-        for (String tt : (ArrayList<String>)args[8]) {
-            clips.assertString("(attribute (name tourism-type) " +
-                                         "(value " + tt + ") " +
-                                         "(certainty 100.0))");
-        }
-
-        for (Hotel h : hotelList) {
-            clips.assertString("(hotel (name " + h.getName() + ") " +
-                                         "(tr " + h.getCity().getName() + ") " +
-                                         "(stars " + h.getStars() + "))");
-        }
-
-        for (TourismType tt : tourismTypeList) {
-            clips.assertString("(tourism-type (tt " + tt.getType() + "))");
-        }
-
-        for (City city : citiesList) {
-            String str = "";
-            List<TourismType> types = city.getTourismTypes();
-            for (TourismType tt : types) { str += tt.getType() + " "; }
-            str = str.substring(0, str.length() - 1);
-            clips.assertString("(tourism-resort " +
-                                         "(name " + city.getName() + ") " +
-                                         "(region " + city.getRegion() + ") " +
-                                         "(type " + str + "))");
-        }
-
+        assertClipsFact(args, hotelList, tourismTypeList, citiesList);
         clips.run();
 
+        /* Getting CLIPS Results */
         String evalStr = "(MAIN::get-hotel-attribute-list)";
         MultifieldValue mv = (MultifieldValue) clips.eval(evalStr);
         double[] coefficients = new double[mv.size()];
@@ -212,9 +74,33 @@ public class SecretSearch implements ISecretSearch{
             coefficients[k++] = rand.nextDouble();
         }
 
-        System.out.println(hotelsName);
-        
-        if (hotelsName.size() > 0) {
+        for (Hotel hotel : hotelList) {
+            if (hotelsName.contains(hotel.getName())) {
+                favoriteHotels.add(hotel);
+            }
+        }
+
+        /* Fill PricePerNight and Place's matricies */
+        for (int i = 0; i < favoriteHotels.size(); i++){
+            Hotel h = favoriteHotels.get(i);
+            List<Room> rooms = hotelRooms.get(h.getId());
+
+            if (rooms == null) { rooms = new ArrayList<>(); }
+
+            for (int j = 0; j < max_room; j++) {
+                if(j >= rooms.size()){
+                    pricePerNight[j][i] = Double.MAX_VALUE;
+                    places[j][i] = 0;
+                } else {
+                    Room r = rooms.get(j);
+                    pricePerNight[j][i] = r.getPricePerNight();
+                    places[j][i] = r.getNumPlaces();
+                }
+            }
+        }
+
+        /* Gettin solutions */
+        if (favoriteHotels.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
                 Pair<Alternative, Double> p = getSolution(hotelsName, certainties, places, pricePerNight,
                         days, budget, coefficients, solutionToDiscard, max_room, people);
@@ -293,18 +179,13 @@ public class SecretSearch implements ISecretSearch{
         constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
 
-        System.out.println(cplex);
-
         if (cplex.solve()) {
             int realDays = 0;
             for (int j = 0; j  < hotels.size(); ++j) {
-
                 realDays += cplex.getValue(x[j]);
                 for (int i = 0; i < maxNumberOfRooms; ++i) {
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
-                        // hm.put("HotelName", hotels.get(j));
-                        // hm.put("RoomId", (i + 1));
                         hm.put("Room", hotelService.findRoomById(Long.valueOf(i + 1)));
                         hm.put("DaysInRoom", cplex.getValue(y[i][j]));
                         hotelsRooms.add(hm);
@@ -321,6 +202,109 @@ public class SecretSearch implements ISecretSearch{
         } else {
             System.out.println("Model not solved");
             return null;
+        }
+    }
+
+    private Map<Long, List<Room>> makeHotelsRoomsHashMap(List<Room> roomFreeList) {
+        Map<Long, List<Room>> hotelRooms = new HashMap<>();
+
+        for (Room r: roomFreeList){
+            Hotel h = r.getHotel();
+
+            if (!hotelRooms.containsKey(h.getId())) {
+                hotelRooms.put(h.getId(), new ArrayList<>());
+            }
+
+            List<Room> rooms = hotelRooms.get(h.getId());
+            rooms.add(r);
+            hotelRooms.replace(h.getId(), rooms);
+        }
+
+        return hotelRooms;
+    }
+
+    private int getMaxNumberOfRooms(Map<Long, List<Room>> hotelRooms) {
+        int max_room = 0;
+
+        for (List<Room> l : hotelRooms.values()){
+            if (max_room < l.size())
+                max_room = l.size();
+        }
+
+        return max_room;
+    }
+
+    private void assertClipsFact(Object[] args, List<Hotel> hotelList,
+                                 List<TourismType> tourismTypeList, List<City> citiesList) throws CLIPSException {
+        int days = (Integer)args[1];
+        double budget = (Double)args[2];
+        int people = (Integer)args[3];
+        String onlyRegion = (String)args[4];
+        String onlyNotRegion = (String)args[5];
+        int maxStars = (args[6] == null) ? 5 : (Integer)args[6];
+        int minStars = (args[7] == null) ? 1 : (Integer)args[7];
+
+        for (Object obj : (ArrayList<Object>)args[0]) {
+            LinkedHashMap<String, Object> hm = (LinkedHashMap<String, Object>)obj;
+
+            clips.assertString("(attribute (name city) " +
+                    "(value " + hm.get("region") + "-" +  hm.get("city") + ") " +
+                    "(certainty 100.0))");
+
+            clips.assertString("(attribute (name region) " +
+                    "(value " + hm.get("region") + ") " +
+                    "(certainty 100.0))");
+        }
+
+        clips.assertString("(attribute (name only-region) " +
+                "(value " + onlyRegion + ") " +
+                "(certainty 100.0))");
+
+        clips.assertString("(attribute (name region) " +
+                "(value " + onlyRegion + ") " +
+                "(certainty 100.0))");
+
+        clips.assertString("(attribute (name only-not-region) " +
+                "(value " + onlyNotRegion + ") " +
+                "(certainty 100.0))");
+
+        clips.assertString("(attribute (name not-region) " +
+                "(value " + onlyNotRegion + ") " +
+                "(certainty 100.0))");
+
+        clips.assertString("(attribute (name max-stars) " +
+                "(value " + maxStars + ") " +
+                "(certainty 100.0))");
+
+        clips.assertString("(attribute (name min-stars) " +
+                "(value " + minStars + ") " +
+                "(certainty 100.0))");
+
+        for (String tt : (ArrayList<String>)args[8]) {
+            clips.assertString("(attribute (name tourism-type) " +
+                    "(value " + tt + ") " +
+                    "(certainty 100.0))");
+        }
+
+        for (Hotel h : hotelList) {
+            clips.assertString("(hotel (name " + h.getName() + ") " +
+                    "(tr " + h.getCity().getName() + ") " +
+                    "(stars " + h.getStars() + "))");
+        }
+
+        for (TourismType tt : tourismTypeList) {
+            clips.assertString("(tourism-type (tt " + tt.getType() + "))");
+        }
+
+        for (City city : citiesList) {
+            String str = "";
+            List<TourismType> types = city.getTourismTypes();
+            for (TourismType tt : types) { str += tt.getType() + " "; }
+            str = str.substring(0, str.length() - 1);
+            clips.assertString("(tourism-resort " +
+                    "(name " + city.getName() + ") " +
+                    "(region " + city.getRegion() + ") " +
+                    "(type " + str + "))");
         }
     }
 }
