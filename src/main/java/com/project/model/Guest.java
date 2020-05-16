@@ -19,9 +19,6 @@ public class Guest {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "hashPwd")
     private String pwd;
 
@@ -31,9 +28,8 @@ public class Guest {
 
     //CONSTRUCTORS
     public Guest() {}
-    public Guest(String email, String name, String pwd, String username) {
+    public Guest(String email, String name, String pwd) {
         this.pwd = pwd;
-        this.username = username;
         this.email = email;
         this.name = name;
         this.booking = null;
@@ -44,7 +40,6 @@ public class Guest {
     public String getEmail() { return email; }
     public String getName() { return name; }
     public List<Booking> getBooking() { return booking; }
-    public String getUsername() { return username; }
     public String getPwd() { return pwd; }
 
     //SETTERS
@@ -56,13 +51,5 @@ public class Guest {
         if(this.booking == null)
             this.booking = new ArrayList<>();
         this.booking.add(booking);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

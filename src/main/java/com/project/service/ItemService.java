@@ -2,7 +2,6 @@ package com.project.service;
 
 import com.project.controller.DataException.InsertException;
 import com.project.controller.DataException.UpdateException;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Booking;
 import com.project.model.Sojourn;
 import com.project.model.SojournItem;
@@ -39,19 +38,16 @@ public class ItemService implements IItemService {
         Optional<Sojourn> sojourn = sojournRepository.findById(sojournId);
 
         if (!item.isPresent()){
-            throw new InsertException(OutputData.ResultCode.INSERT_ERROR,
-                    "Item with id. " + itemId + " not found.");
+            throw new InsertException("Item with id. " + itemId + " not found.");
         } else if (!sojourn.isPresent()) {
-            throw new InsertException(OutputData.ResultCode.INSERT_ERROR,
-                    "Sojourn with id. " + sojournId + " not found.");
+            throw new InsertException("Sojourn with id. " + sojournId + " not found.");
         } else if (!itemRepository.checkItemAlreadyRented(itemId, startRent, endRent).isEmpty()) {
-            throw new InsertException(OutputData.ResultCode.INSERT_ERROR,
-                    "Item with id. " + itemId + " already rented.");
+            throw new InsertException("Item with id. " + itemId + " already rented.");
         }
 
         if (sojourn.get().getArrival().compareTo(startRent) == 1 ||
                 sojourn.get().getDeparture().compareTo(endRent) == -1) {
-            throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Wrong time frame.");
+            throw new InsertException("Wrong time frame.");
         }
 
         SojournItem sojournItem = new SojournItem();

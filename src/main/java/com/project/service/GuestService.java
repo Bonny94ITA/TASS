@@ -1,7 +1,6 @@
 package com.project.service;
 
 import com.project.controller.DataException.InsertException;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Booking;
 import com.project.model.Guest;
 import com.project.repository.GuestRepository;
@@ -34,21 +33,24 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    public Guest addGuest(Guest g) {
-        Guest newGuest = null;
-        newGuest = guestRepository.save(new Guest(g.getEmail(), g.getName(),
-                g.getPwd(), g.getUsername()));
+    public Guest addGuest(Guest g) throws InsertException {
+        Guest newGuest = guestRepository.save(new Guest(g.getEmail(), g.getName(), g.getPwd()));
+
+        if (newGuest == null) {
+            throw new InsertException("Error in creating new guest.");
+        }
+
         return newGuest;
     }
 
     @Override
-    public Object login(String email, String pwd) {
+    public Guest login(String email, String pwd) {
         Optional<Guest> guest = guestRepository.findByEmail(email);
 
-        if (guest.isPresent()) {
-            return (pwd.equals(guest.get().getPwd())) ? guest : new Integer(-1);
-        } else
-            return new Integer(-2);
+        if (guest.isPresent() && pwd.equals(guest.get().getPwd()))
+            return guest.get();
+
+        return null;
     }
 
     @Override

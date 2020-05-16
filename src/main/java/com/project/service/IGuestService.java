@@ -12,9 +12,9 @@ public interface IGuestService{
 
     Guest findById(Long id);
 
-    Guest addGuest(Guest guest);
+    Guest addGuest(Guest guest) throws InsertException;
 
-    Object login(String email, String pwd);
+    Guest login(String email, String pwd);
 
     List<Booking> getBookings(Long id);
 

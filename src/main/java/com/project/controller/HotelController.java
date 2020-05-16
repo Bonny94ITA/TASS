@@ -1,10 +1,11 @@
 package com.project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.*;
 import com.project.service.IHotelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
@@ -21,41 +22,25 @@ public class HotelController {
     IHotelService hotelService;
 
     @GetMapping("/hotels")
-    public OutputData getAllHotels() {
-        OutputData df = new OutputData();
+    public ResponseEntity<?> getAllHotels() {
         List<Hotel> allHotels = hotelService.findAllHotels();
-
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(allHotels);
-
-        return df;
+        return new ResponseEntity<>(allHotels, HttpStatus.OK);
     }
 
     @GetMapping("/hotel/rooms/{id}")
-    public OutputData getHotelRooms(@PathVariable("id") long hotelId) {
-        OutputData df = new OutputData();
+    public ResponseEntity<?> getHotelRooms(@PathVariable("id") long hotelId) {
         List<Room> rooms = hotelService.findRooms(hotelId);
-
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(rooms);
-
-        return df;
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
     @GetMapping("/cities")
-    public OutputData getCities(){
-        OutputData df = new OutputData();
+    public ResponseEntity<?> getCities(){
         List<City> cities = hotelService.findAllCities();
-
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(cities);
-
-        return df;
+        return new ResponseEntity<>(cities, HttpStatus.OK);
     }
 
     @PostMapping(value ="/freeRooms")
-    public OutputData postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
-        OutputData df = new OutputData();
+    public ResponseEntity<?> postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
         Integer numPlaces = mapper.convertValue(requestParams.get("numPlaces"),Integer.class);
@@ -68,10 +53,7 @@ public class HotelController {
                 hotelService.findFreeRooms(arrival, departure, city) :
                 hotelService.findFreeRooms(arrival, departure) ;
 
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(freeRooms);
-
-        return df;
+        return new ResponseEntity<>(freeRooms, HttpStatus.OK);
     }
 
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già

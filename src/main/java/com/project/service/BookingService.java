@@ -3,7 +3,6 @@ package com.project.service;
 import com.project.controller.DataException.DeleteException;
 import com.project.controller.DataException.InsertException;
 import com.project.controller.DataException.UpdateException;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.*;
 import com.project.repository.BookingRepository;
 import org.hibernate.result.Output;
@@ -38,7 +37,7 @@ public class BookingService implements IBookingService {
         for(Sojourn s : booking.getSojourns()){
             Room room = roomService.findById(s.getRoom().getId());
             if(room == null)
-                throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Room with id. " +
+                throw new InsertException("Room with id. " +
                         s.getRoom().getId() + " not found.");
             s.setRoom(room);
             Sojourn soj = sojournService.addSojourn(s);
@@ -49,7 +48,7 @@ public class BookingService implements IBookingService {
             b = bookingRepository.save(new Booking(sojournsFound));
             guestService.addBooking(guestId,b);
             return b;
-        } else throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Guest with id. " +
+        } else throw new InsertException("Guest with id. " +
                 guestId + " not found.");
     }
 
@@ -64,7 +63,7 @@ public class BookingService implements IBookingService {
     public void deleteById(long id) throws DeleteException {
         if (bookingRepository.findById(id).isPresent())
             bookingRepository.deleteById(id);
-        else throw new DeleteException(OutputData.ResultCode.DELETE_ERROR, "Booking with id. " +
+        else throw new DeleteException("Booking with id. " +
                 id + " not found.");
     }
 
@@ -85,7 +84,7 @@ public class BookingService implements IBookingService {
 
         //cointrolo se le stanze del booking sono ancora libere
         if(!booking.isPresent())
-            throw new InsertException(OutputData.ResultCode.INSERT_ERROR, "Booking with id. " +
+            throw new InsertException("Booking with id. " +
                     bookingId + " not present.");
         return paymentService.addPayment(new Payment(totalPayment,booking.get()));
     }

@@ -1,8 +1,8 @@
 package com.project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Authentication.AuthenticationUtils;
 import com.project.controller.DataException.InsertException;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Alternative;
 import com.project.model.Booking;
 import com.project.model.Payment;
@@ -13,7 +13,12 @@ import com.project.service.ISecretSearch;
 import ilog.concert.IloException;
 import net.sf.clipsrules.jni.CLIPSException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,9 +41,8 @@ public class BookingsController {
     private ISecretSearch secretSearch;
     
     @PostMapping("/secretSearch")
-    public OutputData getSecretSearch(@RequestBody Map<String,Object> requestParams)
+    public ResponseEntity<?> getSecretSearch(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {
-        OutputData df = new OutputData();
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -60,81 +64,70 @@ public class BookingsController {
                 maxBudget, numPeople, onlyRegion,
                 onlyNotRegion, maxStars, minStars, tourismTypes, arrival, departure);
 
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(allAlternatives);
-
-        return df;
-    }
-
-    @GetMapping("/bookings")
-    public OutputData getAllBooking() {
-        OutputData df = new OutputData();
-        List<Booking> allBookings = bookingService.findAll();
-
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(allBookings);
-
-        return df;
+        return new ResponseEntity<>(allAlternatives, HttpStatus.OK);
     }
 
     //da fare: quando i parametri passati non sono in database ritorna null, quando non passiamo i parametri la get su json torna null
     @PostMapping(value = "/bookings/insert")
-    public OutputData postRegisterBooking(@RequestBody Map<String,Object> requestParams) throws ParseException {
-        OutputData df = new OutputData();
-        ObjectMapper mapper = new ObjectMapper();
-        //get from params
-        Long guestId = mapper.convertValue(requestParams.get("guest"),Long.class);
-        //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
-        Booking booking = mapper.convertValue(requestParams.get("booking"),Booking.class);
+    public ResponseEntity<?> postRegisterBooking(@RequestBody Map<String, Object> requestParams) throws ParseException {
+        String token = (String)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("token");
+        int tokenType = (Integer)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("type");
 
-        try {
-            Booking b = bookingService.addBook(booking, guestId);
-            df.setResultCode(OutputData.ResultCode.RESULT_OK);
-            df.setReturnedValue(b);
-        } catch (InsertException e) {
-            df.setResultCode(e.getExceptionCode());
-        }
+        if (AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
+            ObjectMapper mapper = new ObjectMapper();
+            Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
+            //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
+            Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
 
-        return df;
+            try {
+                Booking b = bookingService.addBook(booking, guestId);
+                return new ResponseEntity<>(b, HttpStatus.OK);
+            }
+            catch (InsertException e) {
+                return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else return new ResponseEntity<> ("Invalid Token", HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping(value = "/booking/pay")
-    public OutputData postPayBooking(@RequestBody Map<String,Object> requestParams) throws ParseException{
-        OutputData df = new OutputData();
-        ObjectMapper mapper = new ObjectMapper();
-        Long bookingId = mapper.convertValue(requestParams.get("bookingId"),Long.class);
-        Double totalPayment = mapper.convertValue(requestParams.get("totalPayment"),Double.class);
+    public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) throws ParseException{
+        String token = (String)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("token");
+        int tokenType = (Integer)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("type");
 
-        try {
-            Payment payment = bookingService.payBooking(bookingId, totalPayment);
-            df.setResultCode(OutputData.ResultCode.RESULT_OK);
-            df.setReturnedValue(payment);
-        } catch (InsertException e) {
-            df.setResultCode(e.getExceptionCode());
-        }
+        if (AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
+            ObjectMapper mapper = new ObjectMapper();
+            Long bookingId = mapper.convertValue(requestParams.get("bookingId"), Long.class);
+            Double totalPayment = mapper.convertValue(requestParams.get("totalPayment"), Double.class);
 
-        return df;
+            try {
+                Payment payment = bookingService.payBooking(bookingId, totalPayment);
+                return new ResponseEntity<>(payment, HttpStatus.OK);
+            } catch (InsertException e) {
+                return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else return new ResponseEntity<> ("Invalid Token", HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping(value = "/booking/rentItem")
-    public OutputData postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
-        OutputData df = new OutputData();
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleDateFormat  sf = new SimpleDateFormat("dd/MM/yyyy");
-        Long sojournId = mapper.convertValue(requestParams.get("sojournId"),Long.class);
-        Long itemId = mapper.convertValue(requestParams.get("itemId"),Long.class);
-        Date startRent = sf.parse((String)requestParams.get("startRent"));
-        Date endRent = sf.parse((String)requestParams.get("endRent"));
+    public ResponseEntity<?> postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
+        String token = (String)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("token");
+        int tokenType = (Integer)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("type");
 
-        try {
-            SojournItem sojournItem = itemService.bookItem(sojournId, itemId, startRent, endRent);
-            df.setResultCode(OutputData.ResultCode.RESULT_OK);
-            df.setReturnedValue(sojournItem);
-        } catch (InsertException e) {
-            df.setResultCode(e.getExceptionCode());
-        }
+        if (AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
+            ObjectMapper mapper = new ObjectMapper();
+            SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+            Long sojournId = mapper.convertValue(requestParams.get("sojournId"), Long.class);
+            Long itemId = mapper.convertValue(requestParams.get("itemId"), Long.class);
+            Date startRent = sf.parse((String) requestParams.get("startRent"));
+            Date endRent = sf.parse((String) requestParams.get("endRent"));
 
-        return df;
+            try {
+                SojournItem sojournItem = itemService.bookItem(sojournId, itemId, startRent, endRent);
+                return new ResponseEntity<>(sojournItem, HttpStatus.OK);
+            } catch (InsertException e) {
+                return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else return new ResponseEntity<> ("Invalid Token", HttpStatus.UNAUTHORIZED);
     }
 }
 /* json

@@ -1,7 +1,6 @@
 package com.project.service;
 
 import com.project.controller.DataException.DeleteException;
-import com.project.controller.DataFormatter.OutputData;
 import com.project.model.Sojourn;
 import com.project.repository.SojournRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class SojournService implements ISojournService {
     public void deleteById(long id) throws DeleteException {
         if (sojournRepository.findById(id).isPresent()) {
             sojournRepository.deleteById(id);
-        } else throw new DeleteException(OutputData.ResultCode.DELETE_ERROR, "Sojourn with id. " +
+        } else throw new DeleteException("Sojourn with id. " +
                 id + " not found.");
     }
 

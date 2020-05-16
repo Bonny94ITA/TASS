@@ -1,24 +1,12 @@
 package com.project.controller.DataException;
 
-import com.project.controller.DataFormatter.OutputData;
-
 import java.util.Objects;
 
 public class DeleteException extends Exception {
-    private OutputData.ResultCode exceptionCode;
     private String exceptionDescription;
 
-    public DeleteException(OutputData.ResultCode insertError, String error) {
-        this.exceptionCode = insertError;
+    public DeleteException(String error) {
         this.exceptionDescription = error;
-    }
-
-    public OutputData.ResultCode getExceptionCode() {
-        return exceptionCode;
-    }
-
-    public void setExceptionCode(OutputData.ResultCode exceptionCode) {
-        this.exceptionCode = exceptionCode;
     }
 
     public String getExceptionDescription() {
@@ -34,20 +22,18 @@ public class DeleteException extends Exception {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteException that = (DeleteException) o;
-        return exceptionCode == that.exceptionCode &&
-                Objects.equals(exceptionDescription, that.exceptionDescription);
+        return Objects.equals(exceptionDescription, that.exceptionDescription);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(exceptionCode, exceptionDescription);
+        return Objects.hash(exceptionDescription);
     }
 
     @Override
     public String toString() {
         return "DeleteException{" +
-                "exceptionCode=" + exceptionCode +
-                ", exceptionDescription='" + exceptionDescription + '\'' +
+                "exceptionDescription='" + exceptionDescription + '\'' +
                 '}';
     }
 }

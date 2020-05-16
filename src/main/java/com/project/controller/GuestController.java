@@ -1,33 +1,17 @@
 package com.project.controller;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.controller.DataException.DeleteException;
-import com.project.controller.DataFormatter.OutputData;
+import com.project.Authentication.AuthenticationUtils;
+import com.project.controller.DataException.InsertException;
 import com.project.model.Booking;
 import com.project.model.Guest;
-import com.project.model.Item;
-import com.project.repository.GuestRepository;
 import com.project.service.IGuestService;
-import com.project.service.IItemService;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
@@ -37,54 +21,51 @@ public class GuestController {
 
     @Autowired
     IGuestService guestService;
-    @Autowired
-    IItemService itemService;
 
     @GetMapping("/guests/bookings/{id}")
-    public OutputData getMyBookings(@PathVariable @NotNull Long id) {
-        OutputData df = new OutputData();
-        List<Booking> bookings = guestService.getBookings(id);
+    public ResponseEntity<?> getMyBookings(@RequestBody Map<String,Object> requestParams, @PathVariable @NotNull Long id) {
+        String token = (String)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("token");
+        int tokenType = (Integer)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("type");
 
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(bookings);
-
-        return df;
+        if (AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
+            List<Booking> bookings = guestService.getBookings(id);
+            return new ResponseEntity<>(bookings, HttpStatus.OK);
+        } else return new ResponseEntity<> ("Invalid Token", HttpStatus.UNAUTHORIZED);
     }
 
-    @PostMapping(value = "/guests/register") // se fallisce a creare hashpsw ritorna null
-    public OutputData postRegisterGuest(@RequestBody Guest u) {
-        OutputData df = new OutputData();
-        Guest guest = guestService.addGuest(u);
-
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(guest);
-
-        return df;
+    @PostMapping(value = "/guests/register")
+    public ResponseEntity<?> postRegisterGuest(@RequestBody Guest u) {
+        try {
+            Guest guest = guestService.addGuest(u);
+            return new ResponseEntity<>(guest, HttpStatus.OK);
+        } catch (InsertException e) {
+            return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //Ogetto guest se tutto ok, -1 Password sbagliata, -2 utente inesistente
     @PostMapping(value = "/guests/login")
-    public OutputData postLoginGuest(@RequestBody Map<String,Object> requestParams){
-        OutputData df = new OutputData();
+    public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException {
+        int ttlToken = 100000000;
         String email = (String)requestParams.get("email");
         String pwd = (String)requestParams.get("pwd");
         Object loginValue = guestService.login(email, pwd);
 
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(loginValue);
+        if (loginValue != null) {
+            Map<String, Object> results = new HashMap<>();
+            Map<String, Object> wrapper = new HashMap<>();
 
-        return df;
-    }
+            String jwt =
+                    AuthenticationUtils.createJWT("1", "localhost:8080", ((Guest) loginValue).getId().toString(), ttlToken);
 
-    @PostMapping(value = "/items/register")
-    public OutputData postRegisterItem(@RequestBody Item i) {
-        OutputData df = new OutputData();
-        Item item = itemService.addItem(i);
+            results.put("id", ((Guest) loginValue).getId());
+            results.put("email", ((Guest) loginValue).getEmail());
+            results.put("name", ((Guest) loginValue).getName());
 
-        df.setResultCode(OutputData.ResultCode.RESULT_OK);
-        df.setReturnedValue(item);
-
-        return df;
+            wrapper.put("token", jwt);
+            wrapper.put("guest", results);
+            return new ResponseEntity<>(wrapper, HttpStatus.OK);
+        } else return new ResponseEntity<>("Fail to login.", HttpStatus.UNAUTHORIZED);
     }
 }
 /*  JSON
