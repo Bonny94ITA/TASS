@@ -1,6 +1,5 @@
 package com.project.service;
 
-import com.project.controller.DataException.InsertException;
 import com.project.model.City;
 import com.project.model.Hotel;
 import com.project.model.Room;

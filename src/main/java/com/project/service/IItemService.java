@@ -1,10 +1,7 @@
 package com.project.service;
 
-import com.project.controller.DataException.InsertException;
-import com.project.controller.DataException.UpdateException;
-import com.project.model.Booking;
+import com.project.controller.exception.InsertException;
 import com.project.model.Item;
-import com.project.model.Sojourn;
 import com.project.model.SojournItem;
 
 import java.util.Date;

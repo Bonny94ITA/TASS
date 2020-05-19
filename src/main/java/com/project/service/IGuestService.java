@@ -1,7 +1,6 @@
 package com.project.service;
 
-import com.project.controller.DataException.DeleteException;
-import com.project.controller.DataException.InsertException;
+import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
 import com.project.model.Guest;
 
@@ -11,6 +10,8 @@ public interface IGuestService{
     List<Guest> findAll();
 
     Guest findById(Long id);
+
+    Guest findByEmail(String email);
 
     Guest addGuest(Guest guest) throws InsertException;
 

@@ -23,13 +23,13 @@ import java.util.Optional;
 public class HotelService implements IHotelService {
 
     @Autowired
-    HotelRepository hotelRepository;
+    private HotelRepository hotelRepository;
     @Autowired
-    RoomRepository roomRepository;
+    private RoomRepository roomRepository;
     @Autowired
-    TourismTypesRepository tourismTypesRepository;
+    private TourismTypesRepository tourismTypesRepository;
     @Autowired
-    CityRepository cityRepository;
+    private CityRepository cityRepository;
 
     @Override
     public List<Hotel> findAllHotels() {

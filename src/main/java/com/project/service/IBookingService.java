@@ -1,14 +1,10 @@
 package com.project.service;
 
-import com.project.controller.DataException.DeleteException;
-import com.project.controller.DataException.InsertException;
-import com.project.controller.DataException.UpdateException;
+import com.project.controller.exception.DeleteException;
+import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
-import com.project.model.Guest;
 import com.project.model.Payment;
-import com.project.model.SojournItem;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IBookingService {

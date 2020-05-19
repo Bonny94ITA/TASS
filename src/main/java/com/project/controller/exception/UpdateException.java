@@ -1,4 +1,4 @@
-package com.project.controller.DataException;
+package com.project.controller.exception;
 
 import java.util.Objects;
 

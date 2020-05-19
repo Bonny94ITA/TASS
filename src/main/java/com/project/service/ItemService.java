@@ -1,12 +1,9 @@
 package com.project.service;
 
-import com.project.controller.DataException.InsertException;
-import com.project.controller.DataException.UpdateException;
-import com.project.model.Booking;
+import com.project.controller.exception.InsertException;
 import com.project.model.Sojourn;
 import com.project.model.SojournItem;
 import com.project.model.Item;
-import com.project.repository.BookingRepository;
 import com.project.repository.ItemRepository;
 import com.project.repository.SojournItemRepository;
 import com.project.repository.SojournRepository;
@@ -20,6 +17,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ItemService implements IItemService {
+
     @Autowired
     private ItemRepository itemRepository;
     @Autowired

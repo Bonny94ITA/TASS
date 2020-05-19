@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class SecretSearch implements ISecretSearch{
+public class SecretSearch implements ISecretSearch {
+
     private Environment clips;
     private IloCplex cplex;
     private static final short NUMBER_OF_SOLUTIONS_PROPOSED = 3;
 
     @Autowired
-    IHotelService hotelService;
-
+    private IHotelService hotelService;
 
     @Autowired
     public SecretSearch () {
@@ -99,7 +99,7 @@ public class SecretSearch implements ISecretSearch{
             }
         }
 
-        /* Gettin solutions */
+        /* Getting solutions */
         if (favoriteHotels.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
                 Pair<Alternative, Double> p = getSolution(favoriteHotels, hotelsRooms, certainties,
@@ -179,8 +179,6 @@ public class SecretSearch implements ISecretSearch{
         constraints.add(cplex.addLe(linearNumExpr2, budget));
         constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
-
-        System.out.println(cplex);
 
         if (cplex.solve()) {
             int realDays = 0;

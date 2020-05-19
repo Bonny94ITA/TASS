@@ -1,9 +1,13 @@
 package com.project.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import com.project.Authentication.AuthenticationUtils;
-import com.project.controller.DataException.InsertException;
+import com.project.authentication.AuthenticationUtils;
+import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
 import com.project.model.Guest;
 import com.project.service.IGuestService;
@@ -20,47 +24,65 @@ import javax.validation.constraints.NotNull;
 public class GuestController {
 
     @Autowired
-    IGuestService guestService;
-
-    @GetMapping("/guests/bookings/{id}")
-    public ResponseEntity<?> getMyBookings(@RequestBody Map<String,Object> requestParams, @PathVariable @NotNull Long id) {
-        String token = (String)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("token");
-        int tokenType = (Integer)((LinkedHashMap<String, Object>)requestParams.get("token_info")).get("type");
-
-        if (AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
-            List<Booking> bookings = guestService.getBookings(id);
-            return new ResponseEntity<>(bookings, HttpStatus.OK);
-        } else return new ResponseEntity<> ("Invalid Token", HttpStatus.UNAUTHORIZED);
-    }
+    private IGuestService guestService;
 
     @PostMapping(value = "/guests/register")
     public ResponseEntity<?> postRegisterGuest(@RequestBody Guest u) {
+        u.setSocial_auth(false);
+
         try {
             Guest guest = guestService.addGuest(u);
-            return new ResponseEntity<>(guest, HttpStatus.OK);
+            return new ResponseEntity<>("Sign up successful", HttpStatus.OK);
         } catch (InsertException e) {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @PostMapping(value = "/guests/socialLogin")
+    public ResponseEntity<?> postSocialLogin(@RequestBody Guest u) throws NoSuchAlgorithmException {
+        if (guestService.findByEmail(u.getEmail()) == null) {
+            String tmp = String.valueOf(u.hashCode() + LocalDateTime.now().getNano());
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] messageDigest = md.digest(tmp.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            u.setPwd(no.toString(16));
+            u.setSocial_auth(true);
+
+            try {
+                Guest guest = guestService.addGuest(u);
+                return new ResponseEntity<>("Sign in successful", HttpStatus.OK);
+            } catch (InsertException e) {
+                return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else return new ResponseEntity<>("Sign in successful", HttpStatus.OK);
+    }
+
     //Ogetto guest se tutto ok, -1 Password sbagliata, -2 utente inesistente
     @PostMapping(value = "/guests/login")
-    public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException {
-        int ttlToken = 100000000;
+    public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException,
+            NoSuchAlgorithmException {
+
+        int ttlToken = 3600000; /// 1 ora in msec
         String email = (String)requestParams.get("email");
         String pwd = (String)requestParams.get("pwd");
-        Object loginValue = guestService.login(email, pwd);
+        Guest loginValue = guestService.login(email, pwd);
 
         if (loginValue != null) {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
             Map<String, Object> results = new HashMap<>();
             Map<String, Object> wrapper = new HashMap<>();
+            Random rnd = new Random();
+            byte[] messageDigest = md.digest((String.valueOf(rnd.nextDouble()) + loginValue.getPwd()).getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
 
             String jwt =
-                    AuthenticationUtils.createJWT("1", "localhost:8080", ((Guest) loginValue).getId().toString(), ttlToken);
+                    AuthenticationUtils.createJWT(hashtext, "localhost:8080",
+                            loginValue.getId().toString(), ttlToken);
 
-            results.put("id", ((Guest) loginValue).getId());
-            results.put("email", ((Guest) loginValue).getEmail());
-            results.put("name", ((Guest) loginValue).getName());
+            results.put("id", loginValue.getId());
+            results.put("email", loginValue.getEmail());
+            results.put("name", loginValue.getName());
 
             wrapper.put("token", jwt);
             wrapper.put("guest", results);

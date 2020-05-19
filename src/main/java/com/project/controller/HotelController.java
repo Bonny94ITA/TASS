@@ -3,6 +3,9 @@ package com.project.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.*;
 import com.project.service.IHotelService;
+import com.project.service.ISecretSearch;
+import ilog.concert.IloException;
+import net.sf.clipsrules.jni.CLIPSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +15,17 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*")
 @RestController
 public class HotelController {
+
     @Autowired
-    IHotelService hotelService;
+    private IHotelService hotelService;
 
     @GetMapping("/hotels")
     public ResponseEntity<?> getAllHotels() {
@@ -27,33 +33,16 @@ public class HotelController {
         return new ResponseEntity<>(allHotels, HttpStatus.OK);
     }
 
-    @GetMapping("/hotel/rooms/{id}")
+    @GetMapping("/hotels/rooms/{id}")
     public ResponseEntity<?> getHotelRooms(@PathVariable("id") long hotelId) {
         List<Room> rooms = hotelService.findRooms(hotelId);
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-    @GetMapping("/cities")
+    @GetMapping("/hotels/cities")
     public ResponseEntity<?> getCities(){
         List<City> cities = hotelService.findAllCities();
         return new ResponseEntity<>(cities, HttpStatus.OK);
-    }
-
-    @PostMapping(value ="/freeRooms")
-    public ResponseEntity<?> postFindFreeRooms(@RequestBody Map<String,Object> requestParams) throws ParseException {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-        Integer numPlaces = mapper.convertValue(requestParams.get("numPlaces"),Integer.class);
-        //modificare
-        Date arrival = sf.parse((String)requestParams.get("arrival"));
-        Date departure = sf.parse((String)requestParams.get("departure"));
-        String city = mapper.convertValue(requestParams.get("city"),String.class);
-
-        List<Room> freeRooms = (city!=null) ? freeRooms =
-                hotelService.findFreeRooms(arrival, departure, city) :
-                hotelService.findFreeRooms(arrival, departure) ;
-
-        return new ResponseEntity<>(freeRooms, HttpStatus.OK);
     }
 
     //BUG: se crei l'oggetto manualmente da pgadmin e poi usi insomnia ti da eccezione dicendo che quell'id esiste già

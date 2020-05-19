@@ -1,11 +1,11 @@
-package com.project.controller.DataException;
+package com.project.controller.exception;
 
 import java.util.Objects;
 
-public class DeleteException extends Exception {
+public class InsertException extends Exception {
     private String exceptionDescription;
 
-    public DeleteException(String error) {
+    public InsertException(String error) {
         this.exceptionDescription = error;
     }
 
@@ -21,19 +21,19 @@ public class DeleteException extends Exception {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeleteException that = (DeleteException) o;
+        InsertException that = (InsertException) o;
         return Objects.equals(exceptionDescription, that.exceptionDescription);
+    }
+
+    @Override
+    public String toString() {
+        return "InsertException{" +
+                "exceptionDescription='" + exceptionDescription + '\'' +
+                '}';
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(exceptionDescription);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteException{" +
-                "exceptionDescription='" + exceptionDescription + '\'' +
-                '}';
     }
 }

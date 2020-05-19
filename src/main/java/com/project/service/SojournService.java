@@ -1,6 +1,6 @@
 package com.project.service;
 
-import com.project.controller.DataException.DeleteException;
+import com.project.controller.exception.DeleteException;
 import com.project.model.Sojourn;
 import com.project.repository.SojournRepository;
 import org.springframework.beans.factory.annotation.Autowired;
