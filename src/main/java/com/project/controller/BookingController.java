@@ -3,17 +3,13 @@ package com.project.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.authentication.AuthenticationUtils;
 import com.project.controller.exception.InsertException;
-import com.project.model.Alternative;
 import com.project.model.Booking;
 import com.project.model.Payment;
 import com.project.model.SojournItem;
 import com.project.service.IBookingService;
 import com.project.service.IGuestService;
 import com.project.service.IItemService;
-import com.project.service.ISecretSearch;
-import ilog.concert.IloException;
-import net.sf.clipsrules.jni.CLIPSException;
-import netscape.javascript.JSObject;
+import com.project.websocket.SharedModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,29 +17,23 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.filter.AbstractRequestLoggingFilter;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.socket.TextMessage;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.http.HTTPException;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -58,6 +48,8 @@ public class BookingController {
     @Autowired
     private IItemService itemService;
 
+    public static SharedModel sharedModel = new SharedModel();
+
     private static class CheckIntegrityTokenFilter extends GenericFilterBean {
 
         public CheckIntegrityTokenFilter () {}
@@ -65,19 +57,22 @@ public class BookingController {
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
                 throws IOException, ServletException {
-            try {
-                JSONObject obj = new JSONObject(((HttpServletRequest)request).getHeader("token_info"));
-                String token = obj.getString("token");
-                Integer tokenType = obj.getInt("type");
+            System.out.println(((HttpServletRequest) request).getMethod());
+            if (!"OPTIONS".equals(((HttpServletRequest) request).getMethod())) {
+                try {
+                    JSONObject obj = new JSONObject(((HttpServletRequest) request).getHeader("token_info"));
+                    String token = obj.getString("token");
+                    Integer tokenType = obj.getInt("type");
 
-                if (!AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
-                    ((HttpServletResponse)response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                            "Invalid Token");
-                } else {
-                    chain.doFilter(request, response);
+                    if (!AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
+                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                "Invalid Token");
+                    } else {
+                        chain.doFilter(request, response);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -92,6 +87,12 @@ public class BookingController {
         registrationBean.addUrlPatterns("/bookings/*");
 
         return registrationBean;
+    }
+
+    @RequestMapping(value = "/*", method = RequestMethod.OPTIONS)
+    public ResponseEntity handleOptionsRequests() {
+        System.out.println("dsdsad");
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/bookings/{guest_id}")
@@ -117,15 +118,19 @@ public class BookingController {
         }
     }
 
-    @PostMapping(value = "/booking/pay")
+    @PostMapping(value = "/bookings/pay")
     public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) throws ParseException{
         ObjectMapper mapper = new ObjectMapper();
         Long bookingId = mapper.convertValue(requestParams.get("bookingId"), Long.class);
+        Long guestId = mapper.convertValue(requestParams.get("guestId"), Long.class);
         Double totalPayment = mapper.convertValue(requestParams.get("totalPayment"), Double.class);
 
         try {
+            sharedModel.getSocketClients().get(guestId).sendMessage(new TextMessage("Makron!"));
             Payment payment = bookingService.payBooking(bookingId, totalPayment);
             return new ResponseEntity<>(payment, HttpStatus.OK);
+        } catch(IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (InsertException e) {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

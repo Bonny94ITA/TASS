@@ -40,7 +40,8 @@ public class GuestController {
 
     @PostMapping(value = "/guests/socialLogin")
     public ResponseEntity<?> postSocialLogin(@RequestBody Guest u) throws NoSuchAlgorithmException {
-        if (guestService.findByEmail(u.getEmail()) == null) {
+        Guest g = guestService.findByEmail(u.getEmail());
+        if (g == null) {
             String tmp = String.valueOf(u.hashCode() + LocalDateTime.now().getNano());
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             byte[] messageDigest = md.digest(tmp.getBytes());
@@ -50,11 +51,11 @@ public class GuestController {
 
             try {
                 Guest guest = guestService.addGuest(u);
-                return new ResponseEntity<>("Sign in successful", HttpStatus.OK);
+                return new ResponseEntity<>(guest.getId(), HttpStatus.OK);
             } catch (InsertException e) {
                 return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } else return new ResponseEntity<>("Sign in successful", HttpStatus.OK);
+        } else return new ResponseEntity<>(g.getId(), HttpStatus.OK);
     }
 
     //Ogetto guest se tutto ok, -1 Password sbagliata, -2 utente inesistente

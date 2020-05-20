@@ -91,8 +91,13 @@
             <artifactId>spring-websocket</artifactId>
             <version>4.0.0.RELEASE</version>
         </dependency>
-
-
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>5.2.5.RELEASE</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
 
     </dependencies>
 
