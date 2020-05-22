@@ -97,7 +97,7 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
-    @GetMapping("/bookingsID/{guest_id}")
+    @GetMapping("/bookings/id/{guest_id}")
     public ResponseEntity<?> getMyBookingsID(@PathVariable @NotNull Long guest_id) {
         List<Long> bookings = guestService.getBookingsID(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
