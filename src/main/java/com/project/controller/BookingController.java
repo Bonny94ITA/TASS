@@ -103,11 +103,10 @@ public class BookingController {
         Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
         //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
-        sendNotificationToClient(1, "Makron!");
 
         try {
             Booking b = bookingService.addBook(booking, guestId);
-            //sendNotificationToClient(5, "Makron!");
+            sendNotificationToClient(1, "Makron!");
             return new ResponseEntity<>(b, HttpStatus.OK);
         }
         catch (InsertException e) {
