@@ -9,8 +9,7 @@ import java.util.Objects;
 public class SharedModel {
     private Map<Integer, WebSocketSession> socketClients = new HashMap<>();
 
-    public SharedModel() {
-    }
+    public SharedModel() { }
 
     public Map<Integer, WebSocketSession> getSocketClients() {
         return socketClients;

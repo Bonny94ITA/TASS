@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -50,7 +51,7 @@ public class BookingController {
 
     public static SharedModel sharedModel = new SharedModel();
 
-    private static class CheckIntegrityTokenFilter extends GenericFilterBean {
+    /*private static class CheckIntegrityTokenFilter extends GenericFilterBean {
 
         public CheckIntegrityTokenFilter () {}
 
@@ -58,8 +59,8 @@ public class BookingController {
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
                 throws IOException, ServletException {
             System.out.println(((HttpServletRequest) request).getMethod());
-            if (!"OPTIONS".equals(((HttpServletRequest) request).getMethod())) {
-                try {
+            try {
+                if(!"OPTIONS".equals(((HttpServletRequest) request).getMethod())) {
                     JSONObject obj = new JSONObject(((HttpServletRequest) request).getHeader("token_info"));
                     String token = obj.getString("token");
                     Integer tokenType = obj.getInt("type");
@@ -67,12 +68,12 @@ public class BookingController {
                     if (!AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
                         ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                 "Invalid Token");
-                    } else {
-                        chain.doFilter(request, response);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    } else chain.doFilter(request, response);
+                } else chain.doFilter(request, response);
+            } catch (JSONException e) {
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -87,16 +88,10 @@ public class BookingController {
         registrationBean.addUrlPatterns("/bookings/*");
 
         return registrationBean;
-    }
-
-    @RequestMapping(value = "/*", method = RequestMethod.OPTIONS)
-    public ResponseEntity handleOptionsRequests() {
-        System.out.println("dsdsad");
-        return new ResponseEntity(HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/bookings/{guest_id}")
-    public ResponseEntity<?> getMyBookings(@RequestBody Map<String,Object> requestParams, @PathVariable @NotNull Long guest_id) {
+    public ResponseEntity<?> getMyBookings(@PathVariable @NotNull Long guest_id) {
         List<Booking> bookings = guestService.getBookings(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
@@ -108,9 +103,11 @@ public class BookingController {
         Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
         //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
+        sendNotificationToClient(1, "Makron!");
 
         try {
             Booking b = bookingService.addBook(booking, guestId);
+            //sendNotificationToClient(5, "Makron!");
             return new ResponseEntity<>(b, HttpStatus.OK);
         }
         catch (InsertException e) {
@@ -119,18 +116,15 @@ public class BookingController {
     }
 
     @PostMapping(value = "/bookings/pay")
-    public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) throws ParseException{
+    public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) throws ParseException,
+            IOException {
         ObjectMapper mapper = new ObjectMapper();
         Long bookingId = mapper.convertValue(requestParams.get("bookingId"), Long.class);
-        Long guestId = mapper.convertValue(requestParams.get("guestId"), Long.class);
         Double totalPayment = mapper.convertValue(requestParams.get("totalPayment"), Double.class);
 
         try {
-            sharedModel.getSocketClients().get(guestId).sendMessage(new TextMessage("Makron!"));
             Payment payment = bookingService.payBooking(bookingId, totalPayment);
             return new ResponseEntity<>(payment, HttpStatus.OK);
-        } catch(IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         } catch (InsertException e) {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -151,6 +145,32 @@ public class BookingController {
         } catch (InsertException e) {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private void sendNotificationToClient(int clientId, String notification) {
+        Runnable sendMessageThread = () -> {
+            int millsBeforeClientConnected = 1000;
+            WebSocketSession session;
+
+            session = sharedModel.getSocketClients().get(clientId);
+            if (session != null && !sharedModel.getSocketClients().get(clientId).isOpen()) {
+                try {
+                    Thread.sleep(millsBeforeClientConnected);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                session = sharedModel.getSocketClients().get(clientId);
+
+                if (session != null)
+                    sharedModel.getSocketClients().get(clientId).sendMessage(new TextMessage(notification));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+
+        sendMessageThread.run();
     }
 }
 /* json
