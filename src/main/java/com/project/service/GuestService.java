@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,6 +65,15 @@ public class GuestService implements IGuestService {
         Guest guest = findById(id);
         if(guest != null)
             return guest.getBooking();
+        else
+            return new ArrayList<>();
+    }
+
+    @Override
+    public List<Long> getBookingsID(Long id) {
+        Guest guest = findById(id);
+        if(guest != null)
+            return guest.getBooking().stream().map((Booking b) -> b.getId()).collect(Collectors.toList());
         else
             return new ArrayList<>();
     }

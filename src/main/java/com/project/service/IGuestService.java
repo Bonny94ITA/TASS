@@ -19,5 +19,7 @@ public interface IGuestService{
 
     List<Booking> getBookings(Long id);
 
+    List<Long> getBookingsID(Long id);
+
     void addBooking(Long id, Booking booking);
 }

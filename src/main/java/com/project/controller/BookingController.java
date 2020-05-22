@@ -5,6 +5,7 @@ import com.project.authentication.AuthenticationUtils;
 import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
 import com.project.model.Payment;
+import com.project.model.Sojourn;
 import com.project.model.SojournItem;
 import com.project.service.IBookingService;
 import com.project.service.IGuestService;
@@ -96,6 +97,12 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
+    @GetMapping("/bookings/id/{guest_id}")
+    public ResponseEntity<?> getMyBookingsID(@PathVariable @NotNull Long guest_id) {
+        List<Long> bookings = guestService.getBookingsID(guest_id);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
+
     //da fare: quando i parametri passati non sono in database ritorna null, quando non passiamo i parametri la get su json torna null
     @PostMapping(value = "/bookings/insert")
     public ResponseEntity<?> postRegisterBooking(@RequestBody Map<String, Object> requestParams) throws ParseException {
@@ -110,6 +117,20 @@ public class BookingController {
             return new ResponseEntity<>(b, HttpStatus.OK);
         }
         catch (InsertException e) {
+            return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "bookings/addSojourn")
+    public ResponseEntity<?> addSojournToExistingBooking(@RequestBody Map<String, Object> requestParams) {
+        ObjectMapper mapper = new ObjectMapper();
+        Long bookingId = mapper.convertValue(requestParams.get("bookingId"), Long.class);
+        Sojourn sojourn = mapper.convertValue(requestParams.get("sojourn"), Sojourn.class);
+
+        try {
+            Booking b = bookingService.addSojournToExistingBooking(bookingId, sojourn);
+            return new ResponseEntity<>(b, HttpStatus.OK);
+        } catch (InsertException e) {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
