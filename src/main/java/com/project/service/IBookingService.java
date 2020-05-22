@@ -4,6 +4,7 @@ import com.project.controller.exception.DeleteException;
 import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
 import com.project.model.Payment;
+import com.project.model.Sojourn;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface IBookingService {
     Booking addBook(Booking booking, Long guestId) throws InsertException;
 
     Booking findById(Long id);
+
+    Booking addSojournToExistingBooking(Long bookingId, Sojourn soj) throws InsertException;
 
     List<Booking> findAll();
 

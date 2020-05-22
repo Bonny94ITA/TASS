@@ -51,6 +51,16 @@ public class BookingService implements IBookingService {
     }
 
     @Override
+    public Booking addSojournToExistingBooking(Long bookingId, Sojourn soj) throws InsertException{
+        Booking b = findById(bookingId);
+        if (b == null)
+            throw new InsertException("The booking " + bookingId + " does not exist!");
+        b.addSojourns(soj);
+        bookingRepository.save(b);
+        return b;
+    }
+
+    @Override
     public List<Booking> findAll() {
         List<Booking> bookings = new ArrayList<>();
         bookingRepository.findAll().forEach(bookings::add);
