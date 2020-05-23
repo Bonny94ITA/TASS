@@ -169,13 +169,13 @@ public class BookingController {
 
     private void sendNotificationToClient(int clientId, String notification) {
         Runnable sendMessageThread = () -> {
-            int millsBeforeClientConnected = 1000;
+            int millsBeforeClientSynchronized = 1000;
             WebSocketSession session;
 
             session = sharedModel.getSocketClients().get(clientId);
-            if (session != null && !sharedModel.getSocketClients().get(clientId).isOpen()) {
+            if (session == null || !session.isOpen()) {
                 try {
-                    Thread.sleep(millsBeforeClientConnected);
+                    Thread.sleep(millsBeforeClientSynchronized);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -183,8 +183,12 @@ public class BookingController {
             try {
                 session = sharedModel.getSocketClients().get(clientId);
 
-                if (session != null)
+                if (session != null && session.isOpen()) {
+                    System.out.println("primple");
                     sharedModel.getSocketClients().get(clientId).sendMessage(new TextMessage(notification));
+                } else if (!sharedModel.getSocketClients().get(clientId).isOpen()) {
+                    System.out.println("chiusa");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

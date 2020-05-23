@@ -62,13 +62,14 @@ public class GuestController {
     @PostMapping(value = "/guests/login")
     public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException,
             NoSuchAlgorithmException {
-
+        System.out.println(requestParams);
         int ttlToken = 3600000; /// 1 ora in msec
         String email = (String)requestParams.get("email");
         String pwd = (String)requestParams.get("pwd");
         Guest loginValue = guestService.login(email, pwd);
 
         if (loginValue != null) {
+            System.out.println("OK");
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             Map<String, Object> results = new HashMap<>();
             Map<String, Object> wrapper = new HashMap<>();
