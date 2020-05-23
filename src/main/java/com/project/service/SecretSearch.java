@@ -37,7 +37,8 @@ public class SecretSearch implements ISecretSearch {
 
     @Override
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
-        List<Room> roomFreeList = hotelService.findFreeRooms((Date)args[9], (Date)args[10]);
+        Date startingDate = (Date)args[9];
+        List<Room> roomFreeList = hotelService.findFreeRooms(startingDate, (Date)args[10]);
         List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
@@ -103,12 +104,12 @@ public class SecretSearch implements ISecretSearch {
         if (favoriteHotels.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
                 Pair<Alternative, Double> p = getSolution(favoriteHotels, hotelsRooms, certainties,
-                        places, pricePerNight, days, budget, coefficients, solutionToDiscard, max_room, people);
+                        places, pricePerNight, days, budget, coefficients, solutionToDiscard, max_room, people, startingDate);
 
                 if (p != null) {
                     solutionToDiscard.add(p.getValue());
                     alternatives.add(p.getKey());
-                } else alternatives.add(new Alternative(new LinkedList<>(), 0));
+                } else alternatives.add(new Alternative(new LinkedList<>(), 0, startingDate));
             }
         }
 
@@ -119,7 +120,7 @@ public class SecretSearch implements ISecretSearch {
                                                   List<Double> certainties, double places[][],
                                                   double pricePerNight[][], int days, double budget,
                                                   double coefficients[], List<Double> solToDiscard,
-                                                  int maxNumberOfRooms, int numPeople)
+                                                  int maxNumberOfRooms, int numPeople, Date startingDate)
             throws IloException {
         cplex = new IloCplex();
         IloIntVar z = cplex.intVar(0, Integer.MAX_VALUE, "z");
@@ -199,7 +200,7 @@ public class SecretSearch implements ISecretSearch {
                 newScalarProduct += (cplex.getValue(x[i]) * coefficients[i]);
             }
 
-            Alternative alt = new Alternative (hotelRooms, realDays);
+            Alternative alt = new Alternative (hotelRooms, realDays, startingDate);
             return new Pair<>(alt, newScalarProduct);
         } else {
             System.out.println("Model not solved");

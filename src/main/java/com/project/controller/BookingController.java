@@ -91,9 +91,15 @@ public class BookingController {
         return registrationBean;
     }*/
 
-    @GetMapping("/bookings/{guest_id}")
-    public ResponseEntity<?> getMyBookings(@PathVariable @NotNull Long guest_id) {
-        List<Booking> bookings = guestService.getBookings(guest_id);
+    @GetMapping("/bookings/paid/{guest_id}")
+    public ResponseEntity<?> getMyPaidBookings(@PathVariable @NotNull Long guest_id) {
+        List<Booking> bookings = guestService.getPayedBooking(guest_id);
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
+
+    @GetMapping("/bookings/saved/{guest_id}")
+    public ResponseEntity<?> getMyFreeBookings(@PathVariable @NotNull Long guest_id) {
+        List<Booking> bookings = guestService.getSavedBooking(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
