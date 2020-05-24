@@ -15,7 +15,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
     @Query(value =
             "SELECT booking.* " +
             "FROM booking " +
-            "WHERE booking.guest = :guest AND " +
+            "WHERE booking.guest = :guest AND" +
                     "NOT EXISTS (" +
                         "SELECT * " +
                         "FROM payment " +
@@ -25,7 +25,7 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
     @Query(value =
             "SELECT booking.* " +
             "FROM booking, payment " +
-            "WHERE booking.id = payment.booking AND " +
+            "WHERE booking.id = payment.booking AND" +
                     "booking.guest = :guest", nativeQuery = true)
     List<Booking> findPayedBooking(@Param("guest") Long GuestID);
 
