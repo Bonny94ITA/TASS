@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Alternative implements Serializable {
-    private List<Sojourn> sojournLists;
+    private List<Sojourn> sojourns;
     private Integer days;
 
     public Alternative(List<HashMap<String, Object>> roomsHotels, Integer days, Date startingDate){
@@ -17,13 +17,13 @@ public class Alternative implements Serializable {
             Date departure = c.getTime();
             sojorunList.add(new Sojourn(arrival, departure, (Room)stanza.get("Room")));
         }
-        this.sojournLists = sojorunList;
+        this.sojourns = sojorunList;
         this.days = days;
     }
 
 
     public List<Sojourn> getSojorunLists() {
-        return sojournLists;
+        return sojourns;
     }
     public Integer getDays() {
         return days;
