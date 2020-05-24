@@ -117,10 +117,11 @@ public class BookingController {
         Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
         //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
+        sendNotificationToClient(1, "Makron!");
 
         try {
             Booking b = bookingService.addBook(booking, guestId);
-            sendNotificationToClient(1, "Makron!");
+            //sendNotificationToClient(5, "Makron!");
             return new ResponseEntity<>(b, HttpStatus.OK);
         }
         catch (InsertException e) {
@@ -177,13 +178,13 @@ public class BookingController {
 
     private void sendNotificationToClient(int clientId, String notification) {
         Runnable sendMessageThread = () -> {
-            int millsBeforeClientSynchronized = 1000;
+            int millsBeforeClientConnected = 1000;
             WebSocketSession session;
 
             session = sharedModel.getSocketClients().get(clientId);
-            if (session == null || !session.isOpen()) {
+            if (session != null && !sharedModel.getSocketClients().get(clientId).isOpen()) {
                 try {
-                    Thread.sleep(millsBeforeClientSynchronized);
+                    Thread.sleep(millsBeforeClientConnected);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -191,12 +192,8 @@ public class BookingController {
             try {
                 session = sharedModel.getSocketClients().get(clientId);
 
-                if (session != null && session.isOpen()) {
-                    System.out.println("primple");
+                if (session != null)
                     sharedModel.getSocketClients().get(clientId).sendMessage(new TextMessage(notification));
-                } else if (!sharedModel.getSocketClients().get(clientId).isOpen()) {
-                    System.out.println("chiusa");
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
