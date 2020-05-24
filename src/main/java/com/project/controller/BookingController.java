@@ -156,7 +156,17 @@ public class BookingController {
             return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
+    @DeleteMapping(value ="/bookings/delete/{booking_id}")
+    public ResponseEntity<?> deleteBooking(@PathVariable @NotNull Long booking_id){
+        try{
+            bookingService.deleteById(booking_id);
+            return new ResponseEntity<>("deleted booking", HttpStatus.OK);
+        }catch (DeleteException e) {
+            return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @PostMapping(value = "/bookings/rentItem")
     public ResponseEntity<?> postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
