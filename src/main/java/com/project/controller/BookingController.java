@@ -203,8 +203,6 @@ public class BookingController {
                 if (session != null && session.isOpen()) {
                     System.out.println("primple");
                     sharedModel.getSocketClients().get(clientId).sendMessage(new TextMessage(notification));
-                } else if (!sharedModel.getSocketClients().get(clientId).isOpen()) {
-                    System.out.println("chiusa");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
