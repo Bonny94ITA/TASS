@@ -9,23 +9,31 @@ public class Alternative implements Serializable {
 
     public Alternative(List<HashMap<String, Object>> roomsHotels, Integer days, Date startingDate){
         Calendar c = Calendar.getInstance();
-        List<Sojourn> sojorunList = new ArrayList<>();
+        List<Sojourn> sojournList = new ArrayList<>();
         c.setTime(startingDate);
         for(HashMap<String, Object> stanza : roomsHotels) {
             Date arrival = c.getTime();
             c.add(Calendar.DAY_OF_MONTH, ((Double)stanza.get("DaysInRoom")).intValue());
             Date departure = c.getTime();
-            sojorunList.add(new Sojourn(arrival, departure, (Room)stanza.get("Room")));
+            sojournList.add(new Sojourn(arrival, departure, (Room)stanza.get("Room")));
         }
-        this.sojourns = sojorunList;
+        this.sojourns = sojournList;
         this.days = days;
     }
 
-
-    public List<Sojourn> getSojorunLists() {
+    public List<Sojourn> getSojourns() {
         return sojourns;
     }
+
+    public void setSojourns(List<Sojourn> sojourns) {
+        this.sojourns = sojourns;
+    }
+
     public Integer getDays() {
         return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
     }
 }

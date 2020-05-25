@@ -167,7 +167,6 @@ public class BookingController {
         }
     }
 
-
     @PostMapping(value = "/bookings/rentItem")
     public ResponseEntity<?> postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
