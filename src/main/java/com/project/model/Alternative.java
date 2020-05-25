@@ -36,4 +36,11 @@ public class Alternative implements Serializable {
     public void setDays(Integer days) {
         this.days = days;
     }
+
+    public Double getTotalPrice(){
+        Double totalPrice = 0.0;
+        for(Sojourn s : sojourns)
+            totalPrice += s.getTotalPrice();
+        return totalPrice;
+    }
 }

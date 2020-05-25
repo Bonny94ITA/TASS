@@ -26,12 +26,17 @@ public class Booking {
     //GETTERS
     public Long getId() { return id; }
     public List<Sojourn> getSojourns() { return sojourns; }
+    public Double getTotalPrice(){
+        Double totalPrice = 0.0;
+        for(Sojourn s : sojourns)
+            totalPrice += s.getTotalPrice();
+        return totalPrice;
+    }
 
     //SETTERS       //non va bene mettere lista = nuova pechè si perdono i collegamenti
     public void setId(Long id) { this.id = id; }
     public void setSojourns(List<Sojourn> sojourns) {
-        this.sojourns.clear();
-        this.sojourns.addAll(sojourns);
+        this.sojourns = sojourns;
     }
     //public void setRentedItems(List<Item> rentedItems) { this.rentedItems = rentedItems; }
 
@@ -41,6 +46,8 @@ public class Booking {
             sojourns = new ArrayList<>();
         sojourns.add(sojourn);
     }
+
+
 
     @Override
     public String toString() {
