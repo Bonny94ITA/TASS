@@ -14,7 +14,7 @@ public class Room {
     private int numPlaces;
 
     @Column(name = "ppn")
-    private int pricePerNight;
+    private double pricePerNight;
 
     @OneToOne
     @JoinColumn(name="hotel")
@@ -22,7 +22,7 @@ public class Room {
 
     //CONSTRUCTORS
     public Room() {}
-    public Room(int numPlaces, Hotel hotel, int pricePerNight) {
+    public Room(int numPlaces, Hotel hotel, double pricePerNight) {
         this.numPlaces = numPlaces;
         this.hotel = hotel;
         this.pricePerNight = pricePerNight;
@@ -32,13 +32,13 @@ public class Room {
     public Long getId() { return id; }
     public int getNumPlaces() { return numPlaces; }
     public Hotel getHotel() { return hotel; }
-    public int getPricePerNight() { return pricePerNight; }
+    public double getPricePerNight() { return pricePerNight; }
 
     //SETTERS
     public void setId(Long id) { this.id = id; }
     public void setNumPlaces(int numPlaces) { this.numPlaces =numPlaces; }
     public void setHotel(Hotel hotel) { this.hotel= hotel; }
-    public void setPricePerNight(int pricePerNight) {this.pricePerNight = pricePerNight; }
+    public void setPricePerNight(double pricePerNight) {this.pricePerNight = pricePerNight; }
 
 
     @Override
