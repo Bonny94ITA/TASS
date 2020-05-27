@@ -5,7 +5,6 @@ import com.project.model.*;
 import com.project.service.IHotelService;
 import com.project.service.ISecretSearch;
 import ilog.concert.IloException;
-import net.sf.clipsrules.jni.CLIPSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -97,7 +97,15 @@
             <artifactId>spring-messaging</artifactId>
             <version>5.2.5.RELEASE</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+        <dependency>
+            <groupId>com.project</groupId>
+            <artifactId>cplex</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>C:\Program Files\IBM\ILOG\CPLEX_Studio_Community129\cplex\lib\cplex.jar</systemPath>
+        </dependency>
+
+
 
     </dependencies>
 
@@ -107,6 +115,31 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>C:\Users\Alberto\Documents\taas19-20-SpringSpike-SpringPostgres-A-master\TASS\CLIPSJNI</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+
         </plugins>
     </build>
 
