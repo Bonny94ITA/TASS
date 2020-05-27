@@ -53,7 +53,7 @@ public class BookingController {
 
     public static SharedModel sharedModel = new SharedModel();
 
-    /*private static class CheckIntegrityTokenFilter extends GenericFilterBean {
+    private static class CheckIntegrityTokenFilter extends GenericFilterBean {
 
         public CheckIntegrityTokenFilter () {}
 
@@ -62,14 +62,17 @@ public class BookingController {
                 throws IOException, ServletException {
             System.out.println(((HttpServletRequest) request).getMethod());
             try {
-                if(!"OPTIONS".equals(((HttpServletRequest) request).getMethod())) {
+                if(!"OPTIONS".equals(((HttpServletRequest) request).getMethod()) &&
+                        !"CONNECT".equals(((HttpServletRequest) request).getMethod()) &&
+                        !"TRACE".equals(((HttpServletRequest) request).getMethod())) {
                     JSONObject obj = new JSONObject(((HttpServletRequest) request).getHeader("token_info"));
                     String token = obj.getString("token");
                     Integer tokenType = obj.getInt("type");
 
                     if (!AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
-                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                "Invalid Token");
+                        HttpServletResponse resp = ((HttpServletResponse) response);
+                        resp.setHeader("Access-Control-Allow-Origin", ((HttpServletRequest) request).getHeader("Origin"));
+                        resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
                     } else chain.doFilter(request, response);
                 } else chain.doFilter(request, response);
             } catch (JSONException e) {
@@ -90,7 +93,7 @@ public class BookingController {
         registrationBean.addUrlPatterns("/bookings/*");
 
         return registrationBean;
-    }*/
+    }
 
     @GetMapping("/bookings/paid/{guest_id}")
     public ResponseEntity<?> getMyPaidBookings(@PathVariable @NotNull Long guest_id) {
