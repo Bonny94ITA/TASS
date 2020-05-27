@@ -4,13 +4,7 @@ import com.project.model.*;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import javafx.util.Pair;
-import net.sf.clipsrules.jni.Environment;
-import net.sf.clipsrules.jni.CLIPSException;
-import net.sf.clipsrules.jni.MultifieldValue;
-import net.sf.clipsrules.jni.PrimitiveValue;
-import net.sf.clipsrules.jni.FactAddressValue;
-import net.sf.clipsrules.jni.LexemeValue;
-import net.sf.clipsrules.jni.NumberValue;
+import net.sf.clipsrules.jni.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
