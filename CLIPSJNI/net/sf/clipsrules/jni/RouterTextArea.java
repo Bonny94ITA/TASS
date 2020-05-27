@@ -3,7 +3,6 @@ package net.sf.clipsrules.jni;
 import javax.swing.*; 
 import javax.swing.border.*; 
 import javax.swing.event.*;
-import javax.swing.table.*;
 import javax.swing.BorderFactory;
 import javax.swing.text.DefaultCaret;
 
@@ -14,7 +13,6 @@ import java.awt.datatransfer.*;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.lang.Byte;
 
 public class RouterTextArea extends JTextArea

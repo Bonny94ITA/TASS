@@ -2,9 +2,8 @@ package net.sf.clipsrules.jni.examples.sudoku;
 
 import java.awt.*;    
 import java.awt.event.*;
-import javax.swing.*;    
-import javax.swing.event.*; 
-import javax.swing.table.*; 
+import javax.swing.*;
+import javax.swing.table.*;
 
 import java.util.List;
 import java.util.Locale;

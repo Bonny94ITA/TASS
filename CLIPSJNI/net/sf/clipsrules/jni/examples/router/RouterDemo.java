@@ -1,14 +1,8 @@
 package net.sf.clipsrules.jni.examples.router;
 
-import javax.swing.*; 
-import javax.swing.border.*; 
-import javax.swing.table.*;
-import java.awt.*; 
-import java.awt.event.*; 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.lang.Byte;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

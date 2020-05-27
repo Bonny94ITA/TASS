@@ -1,9 +1,7 @@
-package net.sf.clipsrules.jni.examples.auto;
+package net.sf.clipsrules.jni.examples.animal;
 
-import javax.swing.*; 
-import javax.swing.border.*; 
-import javax.swing.table.*;
-import java.awt.*; 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*; 
 
 import java.io.FileNotFoundException;
@@ -50,7 +48,7 @@ or makeInstance call, retain it and then release it after the call is made.
 
 */
 
-class AutoDemo implements ActionListener
+class AnimalDemo implements ActionListener
   {  
    private enum InterviewState 
      {
@@ -64,7 +62,7 @@ class AutoDemo implements ActionListener
    JButton prevButton;
    JPanel choicesPanel;
    ButtonGroup choicesButtons;
-   ResourceBundle autoResources;
+   ResourceBundle animalResources;
 
    Environment clips;
    boolean isExecuting = false;
@@ -77,11 +75,11 @@ class AutoDemo implements ActionListener
 
    InterviewState interviewState;
 
-   AutoDemo()
+   AnimalDemo()
      {  
       try
         {
-         autoResources = ResourceBundle.getBundle("net.sf.clipsrules.jni.examples.auto.resources.AutoResources",Locale.getDefault());
+         animalResources = ResourceBundle.getBundle("net.sf.clipsrules.jni.examples.animal.resources.AnimalResources",Locale.getDefault());
         }
       catch (MissingResourceException mre)
         {
@@ -93,7 +91,7 @@ class AutoDemo implements ActionListener
       /* Create a new JFrame container. */
       /*================================*/
      
-      JFrame jfrm = new JFrame(autoResources.getString("AutoDemo"));  
+      JFrame jfrm = new JFrame(animalResources.getString("AnimalDemo"));  
  
       /*=============================*/
       /* Specify FlowLayout manager. */
@@ -134,12 +132,12 @@ class AutoDemo implements ActionListener
 
       JPanel buttonPanel = new JPanel(); 
       
-      prevButton = new JButton(autoResources.getString("Prev"));
+      prevButton = new JButton(animalResources.getString("Prev"));
       prevButton.setActionCommand("Prev");
       buttonPanel.add(prevButton);
       prevButton.addActionListener(this);
       
-      nextButton = new JButton(autoResources.getString("Next"));
+      nextButton = new JButton(animalResources.getString("Next"));
       nextButton.setActionCommand("Next");
       buttonPanel.add(nextButton);
       nextButton.addActionListener(this);
@@ -159,19 +157,20 @@ class AutoDemo implements ActionListener
       variableAsserts = new ArrayList<String>();
       priorAnswers = new ArrayList<String>();
 
-      /*================================*/
-      /* Load and run the auto program. */
-      /*================================*/
+      /*==================================*/
+      /* Load and run the animal program. */
+      /*==================================*/
 
       clips = new Environment();
-
+      
       try
         {
-         clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto.clp");
-
+         clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/bcengine.clp");
+         clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal.clp");
+         
          try 
            {
-            clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto_" + 
+            clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal_" + 
                                    Locale.getDefault().getLanguage() + ".clp");
            }
          catch (FileNotFoundException fnfe)
@@ -179,16 +178,15 @@ class AutoDemo implements ActionListener
             if (Locale.getDefault().getLanguage().equals("en"))
               { throw fnfe; }
             else
-              { clips.loadFromResource("/net/sf/clipsrules/jni/examples/auto/resources/auto_en.clp"); }
+              { clips.loadFromResource("/net/sf/clipsrules/jni/examples/animal/resources/animal_en.clp"); }
            }
-
+            
          processRules();
         }
       catch (Exception e)
         {
          e.printStackTrace();
          System.exit(1);
-         return;
         }
 
       /*====================*/
@@ -206,7 +204,7 @@ class AutoDemo implements ActionListener
       /*===========================*/
       /* Get the current UI state. */
       /*===========================*/
-      
+            
       FactAddressValue fv = clips.findFact("UI-state");
 
       /*========================================*/
@@ -217,7 +215,7 @@ class AutoDemo implements ActionListener
         { 
          interviewState = InterviewState.CONCLUSION;
          nextButton.setActionCommand("Restart");
-         nextButton.setText(autoResources.getString("Restart")); 
+         nextButton.setText(animalResources.getString("Restart")); 
          prevButton.setVisible(true);
          choicesPanel.setVisible(false);
         }
@@ -225,7 +223,7 @@ class AutoDemo implements ActionListener
         {
          interviewState = InterviewState.GREETING;
          nextButton.setActionCommand("Next");
-         nextButton.setText(autoResources.getString("Next"));
+         nextButton.setText(animalResources.getString("Next"));
          prevButton.setVisible(false);
          choicesPanel.setVisible(false);
         }
@@ -233,7 +231,7 @@ class AutoDemo implements ActionListener
         { 
          interviewState = InterviewState.INTERVIEW;
          nextButton.setActionCommand("Next");
-         nextButton.setText(autoResources.getString("Next"));
+         nextButton.setText(animalResources.getString("Next"));
          prevButton.setVisible(true);
          choicesPanel.setVisible(true);
         }
@@ -316,10 +314,10 @@ class AutoDemo implements ActionListener
         { e.printStackTrace(); }
      }
 
-   /***********/
-   /* runAuto */
-   /***********/  
-   public void runAuto()
+   /*************/
+   /* runAnimal */
+   /*************/  
+   public void runAnimal()
      {
       Runnable runThread = 
          new Runnable()
@@ -357,7 +355,7 @@ class AutoDemo implements ActionListener
    /****************/  
    private void processRules() throws CLIPSException
      {
-      clips.reset();
+      clips.reset();      
       
       for (String factString : variableAsserts) 
         {
@@ -365,7 +363,7 @@ class AutoDemo implements ActionListener
          clips.eval(assertCommand);
 		}
 		
-      runAuto();
+      runAnimal();
      }
      
    /********************/
@@ -383,7 +381,7 @@ class AutoDemo implements ActionListener
          case GREETING:
          case INTERVIEW:
            theAnswer = choicesButtons.getSelection().getActionCommand();
-           theString = "(" + relationAsserted + " " +  theAnswer + ")";
+           theString = "(variable (name " + relationAsserted + ") (value " +  theAnswer + "))";
            variableAsserts.add(theString);
            priorAnswers.add(theAnswer);
            break;
@@ -489,7 +487,7 @@ class AutoDemo implements ActionListener
       SwingUtilities.invokeLater(
         new Runnable() 
           {  
-           public void run() { new AutoDemo(); }  
+           public void run() { new AnimalDemo(); }  
           });   
      }  
   }
