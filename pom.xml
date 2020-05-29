@@ -97,6 +97,8 @@
             <artifactId>spring-messaging</artifactId>
             <version>5.2.5.RELEASE</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+
     </dependencies>
 
     <build>

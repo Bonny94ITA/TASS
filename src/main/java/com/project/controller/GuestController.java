@@ -74,7 +74,7 @@ public class GuestController {
             Map<String, Object> results = new HashMap<>();
             Map<String, Object> wrapper = new HashMap<>();
             Random rnd = new Random();
-            byte[] messageDigest = md.digest((String.valueOf(rnd.nextDouble()) + loginValue.getPwd()).getBytes());
+            byte[] messageDigest = md.digest((String.valueOf(rnd.nextDouble()) + loginValue.getEmail()).getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
             String hashtext = no.toString(16);
 

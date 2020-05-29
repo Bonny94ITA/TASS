@@ -4,6 +4,7 @@ import com.project.model.Alternative;
 import ilog.concert.IloException;
 import net.sf.clipsrules.jni.CLIPSException;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ISecretSearch {
