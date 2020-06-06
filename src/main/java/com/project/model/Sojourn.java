@@ -1,6 +1,7 @@
 package com.project.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Entity
 @Table(name = "sojourn")
 @Check(constraints = "arrival <= departure")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sojourn {
 
     //FIELDS
@@ -31,7 +33,6 @@ public class Sojourn {
     @OneToOne
     @JoinColumn(name = "room")
     private Room room;
-
 
     //CONSTRUCTORS
     public Sojourn() {}

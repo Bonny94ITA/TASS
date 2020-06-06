@@ -15,12 +15,12 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
     List<Room> findByHotel(Hotel h);
     @Query(value = "SELECT room.* " +
             "FROM sojourn, room, hotel, city " +
-            "WHERE (:arrival <= sojourn.departure OR :departure >= sojourn.arrival) AND " +
+            "WHERE (:arrival > sojourn.departure OR :departure < sojourn.arrival) AND " +
             "sojourn.room = room.id AND " +
             "hotel.id = room.hotel AND " +
             "city.id = hotel.city AND " +
             "city.name = :city AND " +
-            "NOT EXISTS (SELECT * FROM payment, booking " +
+            "EXISTS (SELECT * FROM payment, booking " +
             "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
             "UNION " +
             "SELECT room.* " +
@@ -34,10 +34,10 @@ public interface RoomRepository extends CrudRepository<Room, Long> {
 
     @Query(value = "SELECT room.* " +
             "FROM sojourn, room, hotel " +
-            "WHERE (:arrival <= sojourn.departure OR :departure >= sojourn.arrival) AND " +
+            "WHERE (:arrival > sojourn.departure OR :departure < sojourn.arrival) AND " +
             "sojourn.room = room.id AND " +
             "hotel.id = room.hotel AND " +
-            "NOT EXISTS (SELECT * FROM payment, booking " +
+            "EXISTS (SELECT * FROM payment, booking " +
             "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
             "UNION " +
             "SELECT room.* " +

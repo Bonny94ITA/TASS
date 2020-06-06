@@ -3,7 +3,7 @@ package com.project.service;
 import com.project.model.*;
 import ilog.concert.*;
 import ilog.cplex.IloCplex;
-import javafx.util.Pair;
+import java.util.AbstractMap.SimpleEntry;
 import net.sf.clipsrules.jni.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,7 +103,7 @@ public class SecretSearch implements ISecretSearch {
         /* Getting solutions */
         if (favoriteHotels.size() > 0) {
             for (int i = 0; i < NUMBER_OF_SOLUTIONS_PROPOSED; ++i) {
-                Pair<Alternative, Double> p = getSolution(favoriteHotels, hotelsRooms, certainties,
+                SimpleEntry<Alternative, Double> p = getSolution(favoriteHotels, hotelsRooms, certainties,
                         places, pricePerNight, days, budget, coefficients, solutionToDiscard, max_room, people, startingDate);
 
                 if (p != null) {
@@ -116,13 +116,15 @@ public class SecretSearch implements ISecretSearch {
         return alternatives;
     }
 
-    private Pair<Alternative, Double> getSolution(List<Hotel> hotels, Map<Long, List<Room>> hotelsRooms,
+    private SimpleEntry<Alternative, Double> getSolution(List<Hotel> hotels, Map<Long, List<Room>> hotelsRooms,
                                                   List<Double> certainties, double places[][],
                                                   double pricePerNight[][], int days, double budget,
                                                   double coefficients[], List<Double> solToDiscard,
                                                   int maxNumberOfRooms, int numPeople, Date startingDate)
             throws IloException {
+        System.out.println("1");
         cplex = new IloCplex();
+        System.out.println("2");
         IloIntVar z = cplex.intVar(0, Integer.MAX_VALUE, "z");
         IloIntVar[] x = new IloIntVar[hotels.size()];
         IloIntVar[][] y = new IloIntVar[maxNumberOfRooms][hotels.size()];
@@ -181,10 +183,13 @@ public class SecretSearch implements ISecretSearch {
         constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
 
+        System.out.println("3");
         if (cplex.solve()) {
+            System.out.println("8");
             int realDays = 0;
             for (int j = 0; j  < hotels.size(); ++j) {
                 realDays += cplex.getValue(x[j]);
+                System.out.println("5");
                 for (int i = 0; i < maxNumberOfRooms; ++i) {
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
@@ -200,8 +205,9 @@ public class SecretSearch implements ISecretSearch {
                 newScalarProduct += (cplex.getValue(x[i]) * coefficients[i]);
             }
 
+            System.out.println("4");
             Alternative alt = new Alternative (hotelRooms, realDays, startingDate);
-            return new Pair<>(alt, newScalarProduct);
+            return new SimpleEntry<>(alt, newScalarProduct);
         } else {
             System.out.println("Model not solved");
             return null;

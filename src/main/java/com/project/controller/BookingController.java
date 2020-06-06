@@ -65,9 +65,9 @@ public class BookingController {
                 if(!"OPTIONS".equals(((HttpServletRequest) request).getMethod()) &&
                         !"CONNECT".equals(((HttpServletRequest) request).getMethod()) &&
                         !"TRACE".equals(((HttpServletRequest) request).getMethod())) {
-                    JSONObject obj = new JSONObject(((HttpServletRequest) request).getHeader("token_info"));
-                    String token = obj.getString("token");
-                    Integer tokenType = obj.getInt("type");
+                    JSONObject token_info = new JSONObject(((HttpServletRequest) request).getHeader("token_info"));
+                    String token = token_info.getString("token");
+                    Integer tokenType = token_info.getInt("type");
 
                     if (!AuthenticationUtils.checkTokenIntegrity(token, tokenType)) {
                         HttpServletResponse resp = ((HttpServletResponse) response);
