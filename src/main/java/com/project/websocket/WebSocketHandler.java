@@ -27,8 +27,8 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message)
             throws IOException {
         String payload = message.getPayload();
-        Integer id = Integer.parseInt(payload.substring(4, 5));
-        String key = payload.substring(12, payload.length());
+        Integer id = Integer.parseInt(payload.substring(4, payload.indexOf(",")));
+        String key = payload.substring(payload.indexOf("key:") + 5, payload.length());
         System.out.println(key);
         System.out.println(id);
 

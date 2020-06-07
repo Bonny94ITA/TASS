@@ -49,7 +49,6 @@ public class AuthenticationUtils {
         KeyPair keyPair = getPrivateKey(keystore, "teiid", "password".toCharArray());
         PrivateKey privateKey=keyPair.getPrivate();
         String SECRET_KEY=encoder.encode(privateKey.getEncoded());
-        System.out.println(SECRET_KEY);
 
         //We will sign our JWT with our ApiKey secret
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
