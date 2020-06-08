@@ -93,7 +93,7 @@ public class AuthenticationUtils {
         URL url = null;
         HttpURLConnection con = null;
 
-        url = new URL("https://graph.facebook.com/" + FACEBOOK_APP_ID + " ?access_token=" + token);
+        url = new URL("https://graph.facebook.com/" + FACEBOOK_APP_ID + "?access_token=" + token);
         con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         int responseCode = con.getResponseCode();

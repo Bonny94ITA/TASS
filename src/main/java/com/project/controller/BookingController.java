@@ -123,7 +123,7 @@ public class BookingController {
 
         try {
             Booking b = bookingService.addBook(booking, guestId);
-            sendNotificationToClient(Math.toIntExact(guestId), "Makron!");
+            sendNotificationToClient(Math.toIntExact(guestId), b.getId().toString());
             return new ResponseEntity<>(b, HttpStatus.OK);
         }
         catch (InsertException e) {
