@@ -170,6 +170,38 @@ public class BookingController {
         }
     }
 
+    @PostMapping(value = "bookings/items/searchItem")
+    public ResponseEntity<?> searchItem(@RequestBody Map<String, Object> requestParams){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String stringToSearch = mapper.convertValue(requestParams.get("stringToSearch"), String.class);
+            SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate = sf.parse((String)requestParams.get("startDate"));
+            Date returnDate = sf.parse((String)requestParams.get("endDate"));
+
+            return itemService.searchItem(stringToSearch, startDate, returnDate);
+        } catch (ParseException | JSONException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "bookings/items/rentItem")
+    public ResponseEntity<?> rentItem(@RequestBody Map<String, Object> requestParams){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Long stringToSearch = mapper.convertValue(requestParams.get("productId"), Long.class);
+            SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate = sf.parse((String)requestParams.get("startDate"));
+            Date returnDate = sf.parse((String)requestParams.get("endDate"));
+
+            return itemService.rentItem(stringToSearch, startDate, returnDate);
+        } catch (ParseException | JSONException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    // TODO => CANCELLARE
     @PostMapping(value = "/bookings/rentItem")
     public ResponseEntity<?> postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
