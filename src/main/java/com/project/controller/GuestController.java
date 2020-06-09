@@ -125,7 +125,7 @@ public class GuestController {
 
         if (loginValue != null) {
             System.out.println("OK");
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             Map<String, Object> results = new HashMap<>();
             Map<String, Object> wrapper = new HashMap<>();
             Random rnd = new Random();

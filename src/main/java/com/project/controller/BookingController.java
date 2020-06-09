@@ -45,8 +45,6 @@ public class BookingController {
     //controllare che se lancia un'eccezione non deve salvare nulla in database (forse lo fa in automatico)
 
     @Autowired
-    private IGuestService guestService;
-    @Autowired
     private IBookingService bookingService;
     @Autowired
     private IItemService itemService;
@@ -97,19 +95,19 @@ public class BookingController {
 
     @GetMapping("/bookings/paid/{guest_id}")
     public ResponseEntity<?> getMyPaidBookings(@PathVariable @NotNull Long guest_id) {
-        List<Booking> bookings = guestService.getPayedBooking(guest_id);
+        List<Booking> bookings = bookingService.getPayedBooking(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/bookings/saved/{guest_id}")
     public ResponseEntity<?> getMyFreeBookings(@PathVariable @NotNull Long guest_id) {
-        List<Booking> bookings = guestService.getSavedBooking(guest_id);
+        List<Booking> bookings = bookingService.getSavedBooking(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/bookings/id/{guest_id}")
     public ResponseEntity<?> getMyBookingsID(@PathVariable @NotNull Long guest_id) {
-        List<Long> bookings = guestService.getBookingsID(guest_id);
+        List<Long> bookings = bookingService.getBookingsID(guest_id);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 

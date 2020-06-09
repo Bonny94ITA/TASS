@@ -66,31 +66,6 @@ public class GuestService implements IGuestService {
     }
 
     @Override
-    public List<Booking> getSavedBooking(Long id) {
-        return bookingRepository.findSavedBooking(id);
-    }
-
-    @Override
-    public List<Booking> getPayedBooking(Long id) {
-        return bookingRepository.findPayedBooking(id);
-    }
-
-    /*@Override
-    public List<Booking> getBookings(Long id) {
-        Guest guest = findById(id);
-        if(guest != null)
-            return guest.getBooking();
-        else
-            return new ArrayList<>();
-    }*/
-
-    @Override
-    public List<Long> getBookingsID(Long id) {
-        List<Booking> bookingList = bookingRepository.findSavedBooking(id);
-            return bookingList.stream().map((Booking b) -> b.getId()).collect(Collectors.toList());
-    }
-
-    @Override
     public void addBooking(Long id, Booking booking) {
         Guest g = findById(id);
         g.addBooking(booking);

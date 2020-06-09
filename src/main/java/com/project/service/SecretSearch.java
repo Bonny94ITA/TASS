@@ -39,6 +39,7 @@ public class SecretSearch implements ISecretSearch {
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
         Date startingDate = (Date)args[9];
         List<Room> roomFreeList = hotelService.findFreeRooms(startingDate, (Date)args[10]);
+        System.out.println(roomFreeList);
         List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
