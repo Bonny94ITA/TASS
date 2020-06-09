@@ -78,6 +78,7 @@ public class HotelService implements IHotelService {
 
     @Override
     public List<Room> findFreeRooms(Date arrival, Date departure){
+        System.out.println("dadsada");
         return roomRepository.findAllFreeRoomsIn(arrival,departure);
     }
 

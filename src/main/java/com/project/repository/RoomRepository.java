@@ -13,38 +13,30 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends CrudRepository<Room, Long> {
     List<Room> findByHotel(Hotel h);
-    @Query(value = "SELECT room.* " +
-            "FROM sojourn, room, hotel, city " +
-            "WHERE (:arrival > sojourn.departure OR :departure < sojourn.arrival) AND " +
-            "sojourn.room = room.id AND " +
-            "hotel.id = room.hotel AND " +
-            "city.id = hotel.city AND " +
-            "city.name = :city AND " +
-            "EXISTS (SELECT * FROM payment, booking " +
-            "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
-            "UNION " +
+    @Query(value =
             "SELECT room.* " +
-            "FROM room, hotel, city " +
-            "WHERE hotel.id = room.hotel AND " +
-            "city.id = hotel.city AND " +
-            "city.name = :city AND " +
-            "NOT EXISTS (SELECT * FROM booking, sojourn " +
-            "WHERE sojourn.booking = booking.id AND sojourn.room = room.id)", nativeQuery = true)
+            "FROM room " +
+            "WHERE room.id NOT IN " +
+                "(SELECT DISTINCT room.id " +
+                "FROM sojourn, room, hotel, city " +
+                "WHERE NOT (:departure < sojourn.arrival OR :arrival > sojourn.departure) AND " +
+                "sojourn.room = room.id AND " +
+                "hotel.id = room.hotel AND " +
+                "city.id = hotel.city AND " +
+                "city.name = :city AND " +
+                "EXISTS (SELECT * FROM payment, booking " +
+                "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking))", nativeQuery = true)
     List<Room> findAllFreeRoomsIn(@Param("arrival") Date arrival, @Param("departure") Date departure, @Param("city") String cityName);
 
     @Query(value = "SELECT room.* " +
-            "FROM sojourn, room, hotel " +
-            "WHERE (:arrival > sojourn.departure OR :departure < sojourn.arrival) AND " +
-            "sojourn.room = room.id AND " +
-            "hotel.id = room.hotel AND " +
-            "EXISTS (SELECT * FROM payment, booking " +
-            "WHERE payment.booking = booking.id AND " + "booking.id = sojourn.booking) " +
-            "UNION " +
-            "SELECT room.* " +
-            "FROM room, hotel " +
-            "WHERE hotel.id = room.hotel AND " +
-            "NOT EXISTS (SELECT * FROM booking, sojourn " +
-            "WHERE sojourn.booking = booking.id AND sojourn.room = room.id)", nativeQuery = true)
+                   "FROM room " +
+                   "WHERE room.id NOT IN " +
+                        "(SELECT DISTINCT room.id " +
+                        "FROM sojourn, room " +
+                        "WHERE NOT (:departure < sojourn.arrival OR :arrival > sojourn.departure) AND " +
+                        "sojourn.room = room.id AND " +
+                        "EXISTS (SELECT * FROM payment, booking " +
+                        "WHERE payment.booking = booking.id AND booking.id = sojourn.booking))", nativeQuery = true)
     List<Room> findAllFreeRoomsIn(@Param("arrival") Date arrival, @Param("departure") Date departure);
 
 }

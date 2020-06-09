@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -95,5 +96,30 @@ public class BookingService implements IBookingService {
             throw new InsertException("Booking with id. " +
                     bookingId + " not present.");
         return paymentService.addPayment(new Payment(totalPayment,booking.get()));
+    }
+
+    @Override
+    public List<Booking> getSavedBooking(Long id) {
+        return bookingRepository.findSavedBooking(id);
+    }
+
+    @Override
+    public List<Booking> getPayedBooking(Long id) {
+        return bookingRepository.findPayedBooking(id);
+    }
+
+    /*@Override
+    public List<Booking> getBookings(Long id) {
+        Guest guest = findById(id);
+        if(guest != null)
+            return guest.getBooking();
+        else
+            return new ArrayList<>();
+    }*/
+
+    @Override
+    public List<Long> getBookingsID(Long id) {
+        List<Booking> bookingList = bookingRepository.findSavedBooking(id);
+        return bookingList.stream().map((Booking b) -> b.getId()).collect(Collectors.toList());
     }
 }

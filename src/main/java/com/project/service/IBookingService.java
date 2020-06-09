@@ -22,5 +22,11 @@ public interface IBookingService {
 
     void deleteAll();
 
+    List<Booking> getSavedBooking(Long id);
+
+    List<Booking> getPayedBooking(Long id);
+
+    List<Long> getBookingsID(Long id);
+
     Payment payBooking(Long bookingId, Double totalPayment) throws InsertException;
 }

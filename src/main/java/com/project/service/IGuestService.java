@@ -17,11 +17,5 @@ public interface IGuestService{
 
     Guest login(String email, String pwd);
 
-    List<Booking> getSavedBooking(Long id);
-
-    List<Booking> getPayedBooking(Long id);
-
-    List<Long> getBookingsID(Long id);
-
     void addBooking(Long id, Booking booking);
 }
