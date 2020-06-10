@@ -223,28 +223,30 @@ public class BookingController {
 
         if (webSocketSessions != null) {
             for (final WebSocketSession session : webSocketSessions) {
-                Runnable sendMessageThread = new Runnable () {
-                    @Override
-                    public void run() {
-                        int millsBeforeClientSynchronized = 1000;
+                if (session.isOpen()) {
+                    Runnable sendMessageThread = new Runnable() {
+                        @Override
+                        public void run() {
+                            int millsBeforeClientSynchronized = 1000;
 
-                        if (session == null || !session.isOpen()) {
+                            if (session == null || !session.isOpen()) {
+                                try {
+                                    Thread.sleep(millsBeforeClientSynchronized);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             try {
-                                Thread.sleep(millsBeforeClientSynchronized);
-                            } catch (InterruptedException e) {
+                                if (session != null && session.isOpen())
+                                    session.sendMessage(new TextMessage(notification));
+                            } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
-                        try {
-                            if (session != null && session.isOpen())
-                                session.sendMessage(new TextMessage(notification));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
+                    };
 
-                sendMessageThread.run();
+                    sendMessageThread.run();
+                }
             }
         }
     }
