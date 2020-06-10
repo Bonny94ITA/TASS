@@ -1,6 +1,5 @@
 package net.sf.clipsrules.jni;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FactInstance 

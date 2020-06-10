@@ -1,7 +1,7 @@
 package net.sf.clipsrules.jni;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CLIPSLoadException extends CLIPSException 
   {

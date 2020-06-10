@@ -1,16 +1,13 @@
 package net.sf.clipsrules.jni;
 
-import java.awt.*; 
-import java.awt.event.*; 
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
-
-import javax.swing.*;
-import javax.swing.event.*; 
-
-import java.lang.Thread;
+import javax.swing.event.EventListenerList;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

@@ -8,7 +8,6 @@ import com.project.repository.CityRepository;
 import com.project.repository.HotelRepository;
 import com.project.repository.RoomRepository;
 import com.project.repository.TourismTypesRepository;
-import jdk.nashorn.internal.runtime.regexp.joni.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -2,16 +2,15 @@ package com.project.websocket;
 
 import com.project.controller.BookingController;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class WebSocketHandler extends AbstractWebSocketHandler {
     private static String KEY = "j4d6854439t1g854";
