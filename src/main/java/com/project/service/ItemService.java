@@ -44,24 +44,19 @@ public class ItemService implements IItemService {
 
     @Override
     public SojournItem bookItem(Long sojournId, Long itemId, Date startRent, Date endRent) throws InsertException {
-        Optional<Item> item = itemRepository.findById(itemId);
+        //Optional<Item> item = itemRepository.findById(itemId);
         Optional<Sojourn> sojourn = sojournRepository.findById(sojournId);
 
-        if (!item.isPresent()){
-            throw new InsertException("Item with id. " + itemId + " not found.");
-        } else if (!sojourn.isPresent()) {
+        if (!sojourn.isPresent()) {
             throw new InsertException("Sojourn with id. " + sojournId + " not found.");
-        } else if (!itemRepository.checkItemAlreadyRented(itemId, startRent, endRent).isEmpty()) {
-            throw new InsertException("Item with id. " + itemId + " already rented.");
         }
-
-        if (sojourn.get().getArrival().compareTo(startRent) == 1 ||
+        /*if (sojourn.get().getArrival().compareTo(startRent) == 1 ||
                 sojourn.get().getDeparture().compareTo(endRent) == -1) {
             throw new InsertException("Wrong time frame.");
-        }
+        }*/
 
         SojournItem sojournItem = new SojournItem();
-        sojournItem.setItem(item.get());
+        sojournItem.setItem(itemId);
         sojournItem.setSojourn(sojourn.get());
         sojournItem.setStartRent(startRent);
         sojournItem.setEndRent(endRent);

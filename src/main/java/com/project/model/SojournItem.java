@@ -19,8 +19,8 @@ public class SojournItem {
     @ManyToOne
     private Sojourn sojourn;
 
-    @ManyToOne
-    private Item item;
+    @Column(name="item")
+    private Long item;
 
     @Column(name="start_rent")
     @JsonFormat(pattern="dd/MM/yyyy")
@@ -57,11 +57,11 @@ public class SojournItem {
         this.sojourn = sojourn;
     }
 
-    public Item getItem() {
+    public Long getItem() {
         return item;
     }
 
-    public void setItem(Item item) {
+    public void setItem(Long item) {
         this.item = item;
     }
 
