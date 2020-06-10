@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 public class BookingService implements IBookingService {
 
     @Autowired
+    private HotelService hotelService;
+    @Autowired
     private BookingRepository bookingRepository;
     @Autowired
     private GuestService guestService;
-    @Autowired
-    private RoomService roomService;
     @Autowired
     private SojournService sojournService;
     @Autowired
@@ -34,7 +34,7 @@ public class BookingService implements IBookingService {
         Guest g = guestService.findById(guestId);
         List<Sojourn> sojournsFound = new ArrayList<>();
         for(Sojourn s : booking.getSojourns()){
-            Room room = roomService.findById(s.getRoom().getId());
+            Room room = hotelService.findRoomById(s.getRoom().getId());
             if(room == null)
                 throw new InsertException("Room with id. " +
                         s.getRoom().getId() + " not found.");
