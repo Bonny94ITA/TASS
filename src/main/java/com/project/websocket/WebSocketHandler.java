@@ -31,9 +31,14 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
         System.out.println(id);
 
         if (key.equals(KEY)) {
-
             Map<Integer, List<WebSocketSession>> socketClients = BookingController.sharedModel.getSocketClients();
             if (socketClients.get(id) != null) {
+                for (WebSocketSession s : socketClients.get(id)) {
+                    System.out.println(s.getRemoteAddress());
+                    if (s.getRemoteAddress().equals(session.getRemoteAddress()))
+                        socketClients.get(id).remove(s);
+                }
+
                 socketClients.get(id).add(session);
             } else {
                 List<WebSocketSession> socketSessions = new LinkedList<>();
