@@ -1,24 +1,18 @@
 package com.project.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.model.*;
+import com.project.model.City;
+import com.project.model.Hotel;
+import com.project.model.Room;
 import com.project.service.IHotelService;
-import com.project.service.ISecretSearch;
-import ilog.concert.IloException;
-import net.sf.clipsrules.jni.CLIPSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*")
 @RestController

@@ -1,21 +1,17 @@
 package net.sf.clipsrules.jni;
 
-import javax.swing.*; 
-import javax.swing.border.*; 
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.BorderFactory;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.DefaultCaret;
-
-import java.awt.*; 
-import java.awt.event.*; 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
-import java.awt.datatransfer.*;
-
-import java.util.List;
+import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.lang.Byte;
+import java.util.List;
 
 public class RouterTextArea extends JTextArea
                             implements Router, KeyListener, CaretListener,

@@ -1,14 +1,12 @@
 package net.sf.clipsrules.jni;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.concurrent.Callable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.lang.NullPointerException;
-import java.io.FileNotFoundException;
+import java.util.concurrent.Callable;
 
 public class Environment
   {

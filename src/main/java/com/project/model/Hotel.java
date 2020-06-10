@@ -1,8 +1,6 @@
 package com.project.model;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "hotel")

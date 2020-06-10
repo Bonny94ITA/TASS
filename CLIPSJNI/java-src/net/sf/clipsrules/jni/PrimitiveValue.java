@@ -1,7 +1,5 @@
 package net.sf.clipsrules.jni;
 
-import java.util.List;
-
 public abstract class PrimitiveValue
   { 
    /*******************/

@@ -1,17 +1,7 @@
 package com.project.controller;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.time.LocalDateTime;
-import java.util.*;
-
 import com.project.authentication.AuthenticationUtils;
 import com.project.controller.exception.InsertException;
-import com.project.model.Booking;
 import com.project.model.Guest;
 import com.project.service.IGuestService;
 import org.json.JSONException;
@@ -21,7 +11,10 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -30,7 +23,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @CrossOrigin(origins = "*")
 @RestController
