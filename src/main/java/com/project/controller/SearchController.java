@@ -48,7 +48,6 @@ public class SearchController {
         return new ResponseEntity<>(freeRooms, HttpStatus.OK);
     }
 
-    // TODO => i throws devono essere catturati e tornare 500
     @PostMapping("/hotels/secretSearch")
     public ResponseEntity<?> getSecretSearch(@RequestBody Map<String,Object> requestParams)
             throws CLIPSException, IloException, ParseException {

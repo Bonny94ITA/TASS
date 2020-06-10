@@ -39,8 +39,6 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 public class BookingController {
-//PROBLEMA: ITEM DEVONO ESSERE ASSOCIABILI A PIù PRENOTAZIONI, INOLTRE DEV'ESSERCI LA DATA DELLA PRENOTAZIONE
-    //controllare che se lancia un'eccezione non deve salvare nulla in database (forse lo fa in automatico)
 
     @Autowired
     private IBookingService bookingService;
@@ -91,6 +89,12 @@ public class BookingController {
         return registrationBean;
     }
 
+
+    /*
+    *
+    *
+    * GETTER BOOKINS
+    * */
     @GetMapping("/bookings/paid/{guest_id}")
     public ResponseEntity<?> getMyPaidBookings(@PathVariable @NotNull Long guest_id) {
         List<Booking> bookings = bookingService.getPayedBooking(guest_id);
@@ -109,8 +113,13 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
+    /*
+    *
+    *
+    * POST INSERT
+    * */
     @PostMapping(value = "/bookings/insert")
-    public ResponseEntity<?> postRegisterBooking(@RequestBody Map<String, Object> requestParams) throws ParseException {
+    public ResponseEntity<?> postRegisterBooking(@RequestBody Map<String, Object> requestParams) {
         ObjectMapper mapper = new ObjectMapper();
         Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
@@ -139,9 +148,13 @@ public class BookingController {
         }
     }
 
+    /*
+    *
+    *
+    * POST PAY
+    * */
     @PostMapping(value = "/bookings/pay")
-    public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) throws ParseException,
-            IOException {
+    public ResponseEntity<?> postPayBooking(@RequestBody Map<String, Object> requestParams) {
         ObjectMapper mapper = new ObjectMapper();
         Long bookingId = mapper.convertValue(requestParams.get("bookingId"), Long.class);
         Double totalPayment = mapper.convertValue(requestParams.get("totalPayment"), Double.class);
@@ -164,6 +177,12 @@ public class BookingController {
         }
     }
 
+
+    /*
+    *
+    *
+    * ITEM SERVICE CALL
+    * */
     @PostMapping(value = "bookings/items/searchItem")
     public ResponseEntity<?> searchItem(@RequestBody Map<String, Object> requestParams){
         try {
@@ -195,6 +214,10 @@ public class BookingController {
         }
     }
 
+
+    /*
+    * NOTIFICATION SECTION
+    * */
     private void sendNotificationToClient(int clientId, String notification) {
         List<WebSocketSession> webSocketSessions = sharedModel.getSocketClients().get(clientId);
 

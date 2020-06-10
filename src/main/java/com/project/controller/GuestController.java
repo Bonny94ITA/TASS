@@ -113,7 +113,10 @@ public class GuestController {
         } else return new ResponseEntity<>(g.getId(), HttpStatus.OK);
     }
 
-    //Ogetto guest se tutto ok, -1 Password sbagliata, -2 utente inesistente
+    /*
+    *
+    * return: 0 tutto ok, -1 password sbagliata, -2 utente insesistente
+     */
     @PostMapping(value = "/guests/login")
     public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException,
             NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
@@ -147,26 +150,3 @@ public class GuestController {
         } else return new ResponseEntity<>("Fail to login.", HttpStatus.UNAUTHORIZED);
     }
 }
-/*  JSON
-GUEST
-    POST - localhost:8080/guests/register
-    {
-		"email":"aaa@aa.ac",
-		"name":"luca",
-		"pwd":"lululu",
-		"username":"luchinobellodemamma"
-    }
-
-    GET - localhost:8080/guests/login
-    {
-		"email":"aaa@aa.ac",
-		"pwd":"lululu"
-    }
-
-ITEM
-    POST- localhost:8080/items/register
-    {
-	"name":"moto2"
-    }
-
- */
