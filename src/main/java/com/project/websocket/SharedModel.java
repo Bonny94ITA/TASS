@@ -3,19 +3,20 @@ package com.project.websocket;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class SharedModel {
-    private Map<Integer, WebSocketSession> socketClients = new HashMap<>();
+    private Map<Integer, List<WebSocketSession>> socketClients = new HashMap<>();
 
     public SharedModel() { }
 
-    public Map<Integer, WebSocketSession> getSocketClients() {
+    public Map<Integer, List<WebSocketSession>> getSocketClients() {
         return socketClients;
     }
 
-    public void setSocketClients(Map<Integer, WebSocketSession> socketClients) {
+    public void setSocketClients(Map<Integer, List<WebSocketSession>> socketClients) {
         this.socketClients = socketClients;
     }
 

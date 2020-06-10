@@ -7,9 +7,7 @@ import com.project.controller.exception.InsertException;
 import com.project.model.Booking;
 import com.project.model.Payment;
 import com.project.model.Sojourn;
-import com.project.model.SojournItem;
 import com.project.service.IBookingService;
-import com.project.service.IGuestService;
 import com.project.service.IItemService;
 import com.project.websocket.SharedModel;
 import org.json.JSONException;
@@ -111,12 +109,10 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
-    //da fare: quando i parametri passati non sono in database ritorna null, quando non passiamo i parametri la get su json torna null
     @PostMapping(value = "/bookings/insert")
     public ResponseEntity<?> postRegisterBooking(@RequestBody Map<String, Object> requestParams) throws ParseException {
         ObjectMapper mapper = new ObjectMapper();
         Long guestId = mapper.convertValue(requestParams.get("guest"), Long.class);
-        //boolean paymentId = mapper.convertValue(requestParams.get("payment"),Boolean.class);
         Booking booking = mapper.convertValue(requestParams.get("booking"), Booking.class);
 
         try {
@@ -188,121 +184,45 @@ public class BookingController {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Long stringToSearch = mapper.convertValue(requestParams.get("productId"), Long.class);
+            Long sojournId = mapper.convertValue(requestParams.get("sojournId"), Long.class);
             SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
             Date startDate = sf.parse((String)requestParams.get("startDate"));
             Date returnDate = sf.parse((String)requestParams.get("endDate"));
 
-            return itemService.rentItem(stringToSearch, startDate, returnDate);
-        } catch (ParseException | JSONException e) {
+            return itemService.rentItem(sojournId, stringToSearch, startDate, returnDate);
+        } catch (ParseException | InsertException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-
-    // TODO => CANCELLARE
-    @PostMapping(value = "/bookings/rentItem")
-    public ResponseEntity<?> postRentItem(@RequestBody Map<String,Object> requestParams) throws ParseException {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-        Long sojournId = mapper.convertValue(requestParams.get("sojournId"), Long.class);
-        Long itemId = mapper.convertValue(requestParams.get("itemId"), Long.class);
-        Date startRent = sf.parse((String) requestParams.get("startRent"));
-        Date endRent = sf.parse((String) requestParams.get("endRent"));
-
-        try {
-            SojournItem sojournItem = itemService.bookItem(sojournId, itemId, startRent, endRent);
-            return new ResponseEntity<>(sojournItem, HttpStatus.OK);
-        } catch (InsertException e) {
-            return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     private void sendNotificationToClient(int clientId, String notification) {
-        Runnable sendMessageThread = () -> {
-            int millsBeforeClientSynchronized = 1000;
-            WebSocketSession session;
+        List<WebSocketSession> webSocketSessions = sharedModel.getSocketClients().get(clientId);
 
-            session = sharedModel.getSocketClients().get(clientId);
-            if (session == null || !session.isOpen()) {
-                try {
-                    Thread.sleep(millsBeforeClientSynchronized);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                session = sharedModel.getSocketClients().get(clientId);
+        if (webSocketSessions != null) {
+            for (final WebSocketSession session : webSocketSessions) {
+                Runnable sendMessageThread = new Runnable () {
+                    @Override
+                    public void run() {
+                        int millsBeforeClientSynchronized = 1000;
 
-                if (session != null && session.isOpen()) {
-                    System.out.println("primple");
-                    sharedModel.getSocketClients().get(clientId).sendMessage(new TextMessage(notification));
-                } /*else if (!sharedModel.getSocketClients().get(clientId).isOpen()) {
-                    System.out.println("chiusa");
-                }*/
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
-
-        sendMessageThread.run();
-    }
-}
-/* json
-    localhost:8080/bookings/insert
-    {
-        "guest": 1,
-        "booking":{
-            "sojourns": [
-                    {
-                            "arrival": "21/05/1921",
-                            "departure": "4/06/1121",
-                            "room": {"id":1}
-                    },
-                    {
-                            "arrival": "8/07/1921",
-                            "departure": "11/08/1921",
-                            "room": {"id":1}
+                        if (session == null || !session.isOpen()) {
+                            try {
+                                Thread.sleep(millsBeforeClientSynchronized);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        try {
+                            if (session != null && session.isOpen())
+                                session.sendMessage(new TextMessage(notification));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-            ],
-            "rentedItems": [
-                    {"id": 1},
-                    {"id": 2}
-            ]
+                };
+
+                sendMessageThread.run();
+            }
         }
     }
- */
-
-/* JSON
-GET - localhost:8080/prova
-{
-	"cities":
-		[
-			{
-				"city": "Nuoro",
-				"region": "Sardegna"
-			},
-			{
-				"city": "MedioCampidano",
-				"region": "Sardegna"
-			},
-			{
-				"city": "Salerno",
-				"region": "Campania"
-			}
-		],
-	"days": 5,
-	"maxBudget": 700.0,
-	"people": 3,
-	"onlyRegion": "Sardegna",
-	"onlyNotRegion": "Lombardia",
-	"maxStars": 4,
-	"minStars": 1,
-	"tourismTypes":
-		[
-			"balneare", "enogastronomico"
-		],
-	"arrival": "8/07/1921",
-    "departure": "11/08/1921"
 }
-
- */

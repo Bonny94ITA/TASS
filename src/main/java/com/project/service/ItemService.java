@@ -81,7 +81,6 @@ public class ItemService implements IItemService {
         return restTemplate.getForEntity(serviceUrl+"sp/rent/sent", String.class);
     }
 
-
     // metodi tommy
     @Override
     public ResponseEntity<String> searchItem(String string, Date startRent, Date endRent) throws JSONException {
@@ -91,10 +90,11 @@ public class ItemService implements IItemService {
         return restTemplate.postForEntity(url, h, String.class);
     }
 
-    @Override // TODO => SALVARE NEL NOSTRO DB ?
-    public ResponseEntity<String> rentItem(Long productId, Date startRent, Date endRent) throws JSONException {
+    public ResponseEntity<String> rentItem(Long sojournId, Long productId, Date startRent, Date endRent)
+            throws InsertException {
         RestTemplate restTemplate = new RestTemplate();
         String url = serviceUrl+" /sp/rent/product/"+productId;
+        this.bookItem(sojournId, productId, startRent, endRent);
         HttpEntity<Message> h = new  HttpEntity<>(createMessage(startRent, endRent));
         return restTemplate.postForEntity(url, h, String.class);
     }

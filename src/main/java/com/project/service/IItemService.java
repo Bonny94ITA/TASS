@@ -20,5 +20,5 @@ public interface IItemService {
 
     ResponseEntity<String> searchItem(String string, Date startRent, Date endRent) throws JSONException;
 
-    ResponseEntity<String> rentItem(Long productId, Date startRent, Date endRent) throws JSONException;
+    ResponseEntity<String> rentItem(Long SojournId, Long productId, Date startRent, Date endRent) throws InsertException;
 }

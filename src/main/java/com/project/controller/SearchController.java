@@ -37,7 +37,6 @@ public class SearchController {
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
         Integer numPlaces = mapper.convertValue(requestParams.get("numPlaces"),Integer.class);
-        //modificare
         Date arrival = sf.parse((String)requestParams.get("arrival"));
         Date departure = sf.parse((String)requestParams.get("departure"));
         String city = mapper.convertValue(requestParams.get("city"),String.class);
