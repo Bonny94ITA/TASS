@@ -94,23 +94,27 @@ public class GuestController {
     }
 
     @PostMapping(value = "/guests/socialLogin")
-    public ResponseEntity<?> postSocialLogin(@RequestBody Guest u) throws NoSuchAlgorithmException {
-        Guest g = guestService.findByEmail(u.getEmail());
-        if (g == null) {
-            String tmp = String.valueOf(u.hashCode() + LocalDateTime.now().getNano());
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            byte[] messageDigest = md.digest(tmp.getBytes());
-            BigInteger no = new BigInteger(1, messageDigest);
-            u.setPwd(no.toString(16));
-            u.setSocial_auth(true);
+    public ResponseEntity<?> postSocialLogin(@RequestBody Guest u) {
+        try {
+            Guest g = guestService.findByEmail(u.getEmail());
+            if (g == null) {
+                String tmp = String.valueOf(u.hashCode() + LocalDateTime.now().getNano());
+                MessageDigest md = MessageDigest.getInstance("SHA-512");
+                byte[] messageDigest = md.digest(tmp.getBytes());
+                BigInteger no = new BigInteger(1, messageDigest);
+                u.setPwd(no.toString(16));
+                u.setSocial_auth(true);
 
-            try {
-                Guest guest = guestService.addGuest(u);
-                return new ResponseEntity<>(guest.getId(), HttpStatus.OK);
-            } catch (InsertException e) {
-                return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else return new ResponseEntity<>(g.getId(), HttpStatus.OK);
+                try {
+                    Guest guest = guestService.addGuest(u);
+                    return new ResponseEntity<>(guest.getId(), HttpStatus.OK);
+                } catch (InsertException e) {
+                    return new ResponseEntity<>(e.getExceptionDescription(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else return new ResponseEntity<>(g.getId(), HttpStatus.OK);
+        }catch (NoSuchAlgorithmException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /*
@@ -118,35 +122,38 @@ public class GuestController {
     * return: 0 tutto ok, -1 password sbagliata, -2 utente insesistente
      */
     @PostMapping(value = "/guests/login")
-    public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) throws JSONException,
-            NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
-        System.out.println(requestParams);
-        int ttlToken = 3600000; /// 1 ora in msec
-        String email = (String)requestParams.get("email");
-        String pwd = (String)requestParams.get("pwd");
-        Guest loginValue = guestService.login(email, pwd);
+    public ResponseEntity<?> postLoginGuest(@RequestBody Map<String,Object> requestParams) {
+        try {
+            System.out.println(requestParams);
+            int ttlToken = 3600000; /// 1 ora in msec
+            String email = (String) requestParams.get("email");
+            String pwd = (String) requestParams.get("pwd");
+            Guest loginValue = guestService.login(email, pwd);
 
-        if (loginValue != null) {
-            System.out.println("OK");
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            Map<String, Object> results = new HashMap<>();
-            Map<String, Object> wrapper = new HashMap<>();
-            Random rnd = new Random();
-            byte[] messageDigest = md.digest((String.valueOf(rnd.nextDouble()) + loginValue.getEmail()).getBytes());
-            BigInteger no = new BigInteger(1, messageDigest);
-            String hashtext = no.toString(16);
+            if (loginValue != null) {
+                System.out.println("OK");
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                Map<String, Object> results = new HashMap<>();
+                Map<String, Object> wrapper = new HashMap<>();
+                Random rnd = new Random();
+                byte[] messageDigest = md.digest((String.valueOf(rnd.nextDouble()) + loginValue.getEmail()).getBytes());
+                BigInteger no = new BigInteger(1, messageDigest);
+                String hashtext = no.toString(16);
 
-            String jwt =
-                    AuthenticationUtils.createJWT(hashtext, "localhost:8433",
-                            loginValue.getId().toString(), ttlToken);
+                String jwt =
+                        AuthenticationUtils.createJWT(hashtext, "localhost:8433",
+                                loginValue.getId().toString(), ttlToken);
 
-            results.put("id", loginValue.getId());
-            results.put("email", loginValue.getEmail());
-            results.put("name", loginValue.getName());
+                results.put("id", loginValue.getId());
+                results.put("email", loginValue.getEmail());
+                results.put("name", loginValue.getName());
 
-            wrapper.put("token", jwt);
-            wrapper.put("guest", results);
-            return new ResponseEntity<>(wrapper, HttpStatus.OK);
-        } else return new ResponseEntity<>("Fail to login.", HttpStatus.UNAUTHORIZED);
+                wrapper.put("token", jwt);
+                wrapper.put("guest", results);
+                return new ResponseEntity<>(wrapper, HttpStatus.OK);
+            } else return new ResponseEntity<>("Fail to login.", HttpStatus.UNAUTHORIZED);
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
