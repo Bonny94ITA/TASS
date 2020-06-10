@@ -11,14 +11,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sun.misc.BASE64Encoder;
+import java.io.*;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.*;
@@ -33,6 +30,27 @@ import java.util.Date;
 public class AuthenticationUtils {
     private static String SECRET_KEY;
 
+    static {
+        //Get the private Key
+        KeyStore keystore= null;
+        try {
+            keystore = KeyStore.getInstance("JKS");
+            BASE64Encoder encoder=new BASE64Encoder();
+            keystore.load(new FileInputStream("keypair.jks"), "password".toCharArray());
+            KeyPair keyPair = getPrivateKey(keystore, "teiid", "password".toCharArray());
+            PrivateKey privateKey=keyPair.getPrivate();
+            SECRET_KEY=encoder.encode(privateKey.getEncoded());
+        } catch (KeyStoreException | FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //Sample method to construct a JWT
     public static String createJWT(String id, String issuer, String subject, long ttlMillis)
             throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
@@ -42,14 +60,6 @@ public class AuthenticationUtils {
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-
-        //Get the private Key
-        KeyStore keystore=KeyStore.getInstance("JKS");
-        BASE64Encoder encoder=new BASE64Encoder();
-        keystore.load(new FileInputStream("keypair.jks"), "password".toCharArray());
-        KeyPair keyPair = getPrivateKey(keystore, "teiid", "password".toCharArray());
-        PrivateKey privateKey=keyPair.getPrivate();
-        String SECRET_KEY=encoder.encode(privateKey.getEncoded());
 
         //We will sign our JWT with our ApiKey secret
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);

@@ -8,6 +8,7 @@ import com.project.repository.SojournRepository;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +41,12 @@ public class ItemService implements IItemService {
             throws InsertException {
         RestTemplate restTemplate = new RestTemplate();
         String url = serviceUrl+" /sp/rent/product/"+productId;
-        this.bookItem(sojournId, productId, startRent, endRent);
         HttpEntity<Message> h = new  HttpEntity<>(createMessage(startRent, endRent));
-        return restTemplate.postForEntity(url, h, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, h, String.class);
+        if (response.getStatusCode() == HttpStatus.OK){
+            this.bookItem(sojournId, productId, startRent, endRent);
+        }
+        return response;
     }
 
     private Message createMessage(Date startRent, Date endRent){
