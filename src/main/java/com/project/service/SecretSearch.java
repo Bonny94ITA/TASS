@@ -39,7 +39,6 @@ public class SecretSearch implements ISecretSearch {
     public List<Alternative> getAllAlternatives(Object... args) throws CLIPSException, IloException {
         Date startingDate = (Date)args[9];
         List<Room> roomFreeList = hotelService.findFreeRooms(startingDate, (Date)args[10]);
-        System.out.println(roomFreeList);
         List<Hotel> hotelList = hotelService.findAllHotels();
         List<TourismType> tourismTypeList = hotelService.findAllTourismTypes();
         List<City> citiesList = hotelService.findAllCities();
@@ -123,9 +122,7 @@ public class SecretSearch implements ISecretSearch {
                                                   double coefficients[], List<Double> solToDiscard,
                                                   int maxNumberOfRooms, int numPeople, Date startingDate)
             throws IloException {
-        System.out.println("1");
         cplex = new IloCplex();
-        System.out.println("2");
         IloIntVar z = cplex.intVar(0, Integer.MAX_VALUE, "z");
         IloIntVar[] x = new IloIntVar[hotels.size()];
         IloIntVar[][] y = new IloIntVar[maxNumberOfRooms][hotels.size()];
@@ -184,13 +181,10 @@ public class SecretSearch implements ISecretSearch {
         constraints.add(cplex.addGe(linearNumExpr4, numPeople));
         cplex.addMaximize(cplex.diff(objective, z));
 
-        System.out.println("3");
         if (cplex.solve()) {
-            System.out.println("8");
             int realDays = 0;
             for (int j = 0; j  < hotels.size(); ++j) {
                 realDays += cplex.getValue(x[j]);
-                System.out.println("5");
                 for (int i = 0; i < maxNumberOfRooms; ++i) {
                     if (cplex.getValue(y[i][j]) > 0) {
                         HashMap<String, Object> hm = new HashMap<String, Object>();
@@ -206,7 +200,6 @@ public class SecretSearch implements ISecretSearch {
                 newScalarProduct += (cplex.getValue(x[i]) * coefficients[i]);
             }
 
-            System.out.println("4");
             Alternative alt = new Alternative (hotelRooms, realDays, startingDate);
             return new SimpleEntry<>(alt, newScalarProduct);
         } else {

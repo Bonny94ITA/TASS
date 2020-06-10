@@ -23,7 +23,7 @@ public class Hotel {
     private Short stars;
 
     @ManyToOne
-    @JoinColumn(name="city") //, insertable = false, updatable = false)
+    @JoinColumn(name="city")
     private City city;
 
     //CONSTRUCTORS

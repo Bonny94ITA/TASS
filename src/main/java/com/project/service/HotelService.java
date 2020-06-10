@@ -72,9 +72,6 @@ public class HotelService implements IHotelService {
 
     @Override
     public List<Room> findFreeRooms(Date arrival, Date departure, String city){
-        System.out.println(arrival);
-        System.out.println(departure);
-        System.out.println(city);
         return roomRepository.findAllFreeRoomsIn(arrival,departure,city);
     }
 
@@ -82,10 +79,4 @@ public class HotelService implements IHotelService {
     public List<Room> findFreeRooms(Date arrival, Date departure){
         return roomRepository.findAllFreeRoomsIn(arrival,departure);
     }
-
-    /* il soggiorno nuovo viene creato quando si paga una prenotazione e quindi blocca la stanza
-    così per cercare le stanze libere basta guardare nei soggiorni esistenti
-     */
-
-    /*per la ricerca l'utente*/
 }

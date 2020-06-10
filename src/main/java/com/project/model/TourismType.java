@@ -2,7 +2,6 @@ package com.project.model;
 
 import javax.persistence.*;
 
-
 @Entity
 @Table(name = "tourismType")
 public class TourismType {

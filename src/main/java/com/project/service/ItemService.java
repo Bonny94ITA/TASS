@@ -26,9 +26,8 @@ public class ItemService implements IItemService {
     @Autowired
     private SojournItemRepository sojournItemRepository;
 
-    private String serviceUrl = "https://safe-escarpment-32688.herokuapp.com/";
+    private static String serviceUrl = "https://safe-escarpment-32688.herokuapp.com/";
 
-    // metodi tommy
     @Override
     public ResponseEntity<String> searchItem(String string, Date startRent, Date endRent) throws JSONException {
         RestTemplate restTemplate = new RestTemplate();

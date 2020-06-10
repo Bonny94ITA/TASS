@@ -91,7 +91,6 @@ public class BookingService implements IBookingService {
     public Payment payBooking(Long bookingId, Double totalPayment) throws InsertException {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
 
-        //cointrolo se le stanze del booking sono ancora libere
         if(!booking.isPresent())
             throw new InsertException("Booking with id. " +
                     bookingId + " not present.");
@@ -107,15 +106,6 @@ public class BookingService implements IBookingService {
     public List<Booking> getPayedBooking(Long id) {
         return bookingRepository.findPayedBooking(id);
     }
-
-    /*@Override
-    public List<Booking> getBookings(Long id) {
-        Guest guest = findById(id);
-        if(guest != null)
-            return guest.getBooking();
-        else
-            return new ArrayList<>();
-    }*/
 
     @Override
     public List<Long> getBookingsID(Long id) {

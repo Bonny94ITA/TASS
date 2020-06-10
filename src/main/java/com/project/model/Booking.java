@@ -33,12 +33,10 @@ public class Booking {
         return totalPrice;
     }
 
-    //SETTERS       //non va bene mettere lista = nuova pechè si perdono i collegamenti
     public void setId(Long id) { this.id = id; }
     public void setSojourns(List<Sojourn> sojourns) {
         this.sojourns = sojourns;
     }
-    //public void setRentedItems(List<Item> rentedItems) { this.rentedItems = rentedItems; }
 
     //ADDERS
     public void addSojourns(Sojourn sojourn) {
@@ -46,8 +44,6 @@ public class Booking {
             sojourns = new ArrayList<>();
         sojourns.add(sojourn);
     }
-
-
 
     @Override
     public String toString() {
